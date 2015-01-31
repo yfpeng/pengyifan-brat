@@ -1,0 +1,9 @@
+bin
+.svn
+output/*
+doc/*
+.directory
+*~
+\#*
+.\#*
+target
