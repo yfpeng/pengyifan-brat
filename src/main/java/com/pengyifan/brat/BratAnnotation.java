@@ -2,7 +2,7 @@ package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-abstract class BratAnnotation {
+public abstract class BratAnnotation {
 
   private String id;
   private String type;
