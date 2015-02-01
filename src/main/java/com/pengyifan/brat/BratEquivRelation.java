@@ -2,6 +2,7 @@ package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -10,7 +11,8 @@ import com.google.common.collect.Sets;
  * Equivalence relations are symmetric and transitive relations that define
  * sets of annotations to be equivalent in some sense (e.g. referring to the
  * same real-world entity). Such relations can be represented in a compact way
- * as a SPACE-separated list of the IDs of the equivalent annotations.
+ * as a SPACE-separated list of the IDs of the equivalent annotations. For
+ * example
  * 
  * <pre>
  * T1  Organization 0 43 International Business Machines Corporation
@@ -21,8 +23,33 @@ import com.google.common.collect.Sets;
  * 
  * For backward compatibility with existing standoff formats, brat supports
  * also the special "empty" ID value "*" for equivalence relation annotations.
+ * <p>
+ * Represented in standoff as
+ * 
+ * <pre>
+ * *\tTYPE ID1 ID2 [...]
+ * </pre>
+ * 
+ * Where "*" is the literal asterisk character.
  */
 public class BratEquivRelation extends BratAnnotation {
+
+  public static BratEquivRelation parseEquivRelation(String s) {
+    String toks[] = s.split("\t");
+    checkArgument(toks.length == 2, "Illegal format: %s", s);
+
+    BratEquivRelation relation = new BratEquivRelation();
+    relation.setId(toks[0]);
+
+    toks = toks[1].split(" ");
+    checkArgument(toks.length >= 2, "Illegal format: %s", s);
+
+    relation.setType(toks[0]);
+    for (int i = 1; i < toks.length; i++) {
+      relation.addArgId(toks[i]);
+    }
+    return relation;
+  }
 
   private Set<String> argIds;
 
@@ -30,15 +57,27 @@ public class BratEquivRelation extends BratAnnotation {
     super();
     argIds = Sets.newHashSet();
   }
+  
+  public BratEquivRelation(BratEquivRelation relation) {
+    super(relation);
+    argIds = Sets.newHashSet(relation.argIds);
+  }
+
+  public void addArgId(String argId) {
+    checkArgument(argIds.contains(argId), "Duplicated arg: %s", argId);
+  }
+
+  public boolean containsArgId(String argId) {
+    return argIds.contains(argId);
+  }
+
+  public Set<String> getArgIds() {
+    return argIds;
+  }
 
   @Override
   public String getId() {
     return "*";
-  }
-
-  @Override
-  public void setType(String type) {
-    throw new UnsupportedOperationException("Type is always Equiv");
   }
 
   @Override
@@ -51,16 +90,9 @@ public class BratEquivRelation extends BratAnnotation {
     throw new UnsupportedOperationException("Id is always *");
   }
 
-  public void addArgId(String argId) {
-    checkArgument(argIds.contains(argId), "Duplicated arg: %s", argId);
-  }
-  
-  public Set<String> getArgIds() {
-    return argIds;
-  }
-  
-  public boolean containsArgId(String argId) {
-    return argIds.contains(argId);
+  @Override
+  public void setType(String type) {
+    throw new UnsupportedOperationException("Type is always Equiv");
   }
 
   @Override
@@ -70,5 +102,23 @@ public class BratEquivRelation extends BratAnnotation {
       sb.append(' ').append(argId);
     }
     return sb.toString();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), argIds);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (obj == null || obj.getClass() != getClass()) {
+      return false;
+    }
+    BratEquivRelation rhs = (BratEquivRelation) obj;
+    return super.equals(obj)
+        && Objects.equals(argIds, rhs.argIds);
   }
 }

@@ -1,4 +1,4 @@
-package com.pengyifan.brat;
+package com.pengyifan.brat.util;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,8 @@ import java.util.List;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import com.pengyifan.brat.BratEntity;
+import com.pengyifan.brat.util.BratUtils;
 
 
 public class BratUtilsTest {
@@ -14,9 +16,9 @@ public class BratUtilsTest {
   @Test
   public void testRemove() {
     List<BratEntity> list = Lists.newArrayList();
-    list.add(createEntity("1", "Protein"));
-    list.add(createEntity("2", "Protein"));
-    list.add(createEntity("3", "Protein2"));
+    list.add(createEntity("T1", "Protein"));
+    list.add(createEntity("T2", "Protein"));
+    list.add(createEntity("T3", "Protein2"));
     
     assertEquals(3, list.size());
     

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.collections4.Equator;
 import org.apache.commons.lang3.Validate;
 
+import com.pengyifan.brat.BratBaseRelation;
 import com.pengyifan.brat.BratDocument;
 import com.pengyifan.brat.BratEntity;
 import com.pengyifan.brat.BratEquivRelation;
@@ -40,7 +41,7 @@ public class BratMerge {
   }
 
   private BratEvent find(BratEvent oldEvent, BratDocument oldDoc) {
-    BratRelationEquator eventEquator = new BratRelationEquator(oldDoc, newDoc);
+    BratBaseRelationEquator eventEquator = new BratBaseRelationEquator(oldDoc, newDoc);
     for (BratEvent newEvent : newDoc.getEvents()) {
       if (eventEquator.equate(oldEvent, newEvent)) {
         return newEvent;
@@ -50,7 +51,7 @@ public class BratMerge {
   }
 
   private BratRelation find(BratRelation oldRel, BratDocument oldDoc) {
-    BratRelationEquator relEquator = new BratRelationEquator(oldDoc, newDoc);
+    BratBaseRelationEquator relEquator = new BratBaseRelationEquator(oldDoc, newDoc);
     for (BratRelation newRel : newDoc.getRelations()) {
       if (relEquator.equate(oldRel, newRel)) {
         return newRel;
@@ -220,12 +221,12 @@ public class BratMerge {
 
   }
 
-  class BratRelationEquator implements Equator<BratRelation> {
+  class BratBaseRelationEquator implements Equator<BratBaseRelation> {
 
     BratDocument doc1;
     BratDocument doc2;
 
-    public BratRelationEquator(
+    public BratBaseRelationEquator(
         BratDocument doc1,
         BratDocument doc2) {
       this.doc1 = doc1;
@@ -233,7 +234,7 @@ public class BratMerge {
     }
 
     @Override
-    public boolean equate(BratRelation r1, BratRelation r2) {
+    public boolean equate(BratBaseRelation r1, BratBaseRelation r2) {
       // type
       if (!r1.getType().equals(r2.getType())) {
         return false;
@@ -247,7 +248,7 @@ public class BratMerge {
     /**
      * for every role:arg in r1, r2 contains role:arg
      */
-    private boolean contains(BratRelation r1, BratRelation r2) {
+    private boolean contains(BratBaseRelation r1, BratBaseRelation r2) {
       for (String role1 : r1.getArguments().keySet()) {
         String argId1 = r1.getArgId(role1);
         checkArgument(
@@ -272,7 +273,7 @@ public class BratMerge {
     }
 
     @Override
-    public int hash(BratRelation arg0) {
+    public int hash(BratBaseRelation arg0) {
       throw new UnsupportedOperationException("hash() is not supported yet.");
     }
   }

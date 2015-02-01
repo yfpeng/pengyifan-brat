@@ -2,6 +2,8 @@ package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Objects;
+
 /**
  * Base class for all annotations with an ID.
  * <p>
@@ -26,14 +28,28 @@ public abstract class BratAnnotation {
 
   BratAnnotation() {
   }
+  
+  BratAnnotation(BratAnnotation annotation) {
+    this.id = annotation.id;
+    this.type = annotation.type;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof BratAnnotation)) {
+      return false;
+    }
+    BratAnnotation rhs = (BratAnnotation) obj;
+    return Objects.equals(id, rhs.id)
+        && Objects.equals(type, rhs.type);
+  }
 
   public String getId() {
     checkNotNull(id, "id has to be set");
     return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getType() {
@@ -41,13 +57,21 @@ public abstract class BratAnnotation {
     return type;
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, type);
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+  
   public void setType(String type) {
     this.type = type;
   }
-
+  
   @Override
   public String toString() {
-    // id TAB type
     return getId() + "\t" + getType();
   }
 }

@@ -2,10 +2,8 @@ package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Objects;
 import java.util.StringJoiner;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
@@ -15,7 +13,7 @@ import com.google.common.collect.TreeRangeSet;
 /**
  * Each entity annotation has a unique ID and is defined by type (e.g. Person
  * or Organization) and the span of characters containing the entity mention
- * (represented as a "start end" offset pair).
+ * (represented as a "start end" offset pair). For example,
  * 
  * <pre>
  * T1  Organization 0 4  Sony
@@ -25,8 +23,46 @@ import com.google.common.collect.TreeRangeSet;
  * 
  * Each line contains one text-bound annotation identifying the entity mention
  * in text.
+ * <p>
+ * Represented in standoff as
+ * 
+ * <pre>
+ * ID\tTYPE START END\tTEXT
+ * </pre>
+ * 
+ * Where START and END are positive integer offsets identifying the span of the
+ * annotation in text and TEXT is the corresponding text. Discontinuous
+ * annotations can be represented as
+ * 
+ * <pre>
+ * ID\tTYPE START1 END1;START2 END2;...
+ * </pre>
+ * 
+ * with multiple START END pairs separated by semicolons.
  */
 public class BratEntity extends BratAnnotation {
+
+  public static BratEntity parseEntity(String s) {
+    String toks[] = s.split("\t");
+    checkArgument(toks.length == 3, "Illegal format: %s", s);
+
+    BratEntity entity = new BratEntity();
+    entity.setId(toks[0]);
+    entity.setText(toks[2]);
+
+    int index = toks[1].indexOf(' ');
+    checkArgument(index != -1, "Illegal format: %s", s);
+    entity.setType(toks[1].substring(0, index));
+
+    for (String loc : toks[1].substring(index + 1).split(";")) {
+      int space = loc.indexOf(' ');
+      checkArgument(space != -1, "Illegal format: %s", s);
+      entity.addSpan(
+          Integer.parseInt(loc.substring(0, space)),
+          Integer.parseInt(loc.substring(space + 1)));
+    }
+    return entity;
+  }
 
   private RangeSet<Integer> rangeSet;
   private String text;
@@ -36,29 +72,19 @@ public class BratEntity extends BratAnnotation {
   }
 
   public BratEntity(BratEntity ent) {
-    this();
-    setId(ent.getId());
-    setType(ent.getType());
-    setText(ent.getText());
-    getSpans().addAll(ent.getSpans());
-  }
-
-  @Override
-  public void setId(String id) {
-    checkArgument(id.startsWith("T"));
-    super.setId(id);
+    super(ent);
+    text = ent.text;
+    rangeSet = TreeRangeSet.create(ent.rangeSet);
   }
 
   /**
    * 
-   * @return the text spanned by the annotation
+   * @param start the index of the first character of the annotated span in the
+   *          text
+   * @param end the index of the first character after the annotated span
    */
-  public String getText() {
-    return text;
-  }
-
-  public void setText(String text) {
-    this.text = text;
+  public void addSpan(int start, int end) {
+    rangeSet.add(Range.closed(start, end));
   }
 
   /**
@@ -74,39 +100,12 @@ public class BratEntity extends BratAnnotation {
     addSpan(span.lowerEndpoint(), span.upperEndpoint());
   }
 
-  public RangeSet<Integer> getSpans() {
-    return rangeSet;
-  }
-
-  /**
-   * 
-   * @param start the index of the first character of the annotated span in the
-   *          text
-   * @param end the index of the first character after the annotated span
-   */
-  public void addSpan(int start, int end) {
-    rangeSet.add(Range.closed(start, end));
-  }
-
-  public Range<Integer> totalSpan() {
-    return getSpans().span();
-  }
-
   public int beginPosition() {
     return rangeSet.span().lowerEndpoint();
   }
 
   public int endPosition() {
     return rangeSet.span().upperEndpoint();
-  }
-
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder()
-        .append(getId())
-        .append(getText())
-        .append(getSpans())
-        .toHashCode();
   }
 
   @Override
@@ -118,12 +117,36 @@ public class BratEntity extends BratAnnotation {
       return false;
     }
     BratEntity rhs = (BratEntity) obj;
-    return new EqualsBuilder()
-        .append(getId(), rhs.getId())
-        .append(getText(), rhs.getText())
-        .append(getType(), rhs.getType())
-        .append(getSpans(), rhs.getSpans())
-        .isEquals();
+    return super.equals(obj)
+        && Objects.equals(text, rhs.text)
+        && Objects.equals(rangeSet, rhs.rangeSet);
+  }
+
+  public RangeSet<Integer> getSpans() {
+    return rangeSet;
+  }
+
+  /**
+   * 
+   * @return the text spanned by the annotation
+   */
+  public String getText() {
+    return text;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), text, rangeSet);
+  }
+
+  @Override
+  public void setId(String id) {
+    checkArgument(id.startsWith("T"), "ID should start with T");
+    super.setId(id);
+  }
+
+  public void setText(String text) {
+    this.text = text;
   }
 
   @Override
@@ -138,5 +161,9 @@ public class BratEntity extends BratAnnotation {
     // text
     sb.append('\t').append(getText());
     return sb.toString();
+  }
+
+  public Range<Integer> totalSpan() {
+    return getSpans().span();
   }
 }

@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -167,31 +165,6 @@ public class BratDocument {
    */
   public String getDocId() {
     return id;
-  }
-
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder()
-        .append(getDocId())
-        .append(getText())
-        .append(getAnnotations())
-        .toHashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj == null || obj.getClass() != getClass()) {
-      return false;
-    }
-    BratDocument rhs = (BratDocument) obj;
-    return new EqualsBuilder()
-        .append(getDocId(), rhs.getDocId())
-        .append(getText(), rhs.getText())
-        // .append(getAnnotations(), rhs.getAnnotations())
-        .isEquals();
   }
 
   @Override

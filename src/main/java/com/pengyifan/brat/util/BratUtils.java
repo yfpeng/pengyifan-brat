@@ -1,4 +1,4 @@
-package com.pengyifan.brat;
+package com.pengyifan.brat.util;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Range;
+import com.pengyifan.brat.BratEntity;
+import com.pengyifan.brat.BratRelation;
 
 public final class BratUtils {
 
