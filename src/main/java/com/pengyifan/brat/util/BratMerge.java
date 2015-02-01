@@ -1,13 +1,13 @@
 package com.pengyifan.brat.util;
 
-import java.util.Arrays;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.Equator;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.pengyifan.brat.BratDocument;
 import com.pengyifan.brat.BratEntity;
@@ -40,7 +40,7 @@ public class BratMerge {
   }
 
   private BratEvent find(BratEvent oldEvent, BratDocument oldDoc) {
-    BratEventEquator eventEquator = new BratEventEquator(oldDoc, newDoc);
+    BratRelationEquator eventEquator = new BratRelationEquator(oldDoc, newDoc);
     for (BratEvent newEvent : newDoc.getEvents()) {
       if (eventEquator.equate(oldEvent, newEvent)) {
         return newEvent;
@@ -61,7 +61,8 @@ public class BratMerge {
 
   // map: old --> new
   private BratEquivRelation find(BratEquivRelation oldRel, BratDocument oldDoc) {
-    BratRelationEquator relEquator = new BratRelationEquator(oldDoc, newDoc);
+    BratEquivRelationEquator relEquator = new BratEquivRelationEquator(oldDoc,
+        newDoc);
     for (BratEquivRelation newRel : newDoc.getEquivRelations()) {
       if (relEquator.equate(oldRel, newRel)) {
         return newRel;
@@ -69,18 +70,6 @@ public class BratMerge {
     }
     return null;
   }
-
-  // map: old --> new
-  // private BratAttribute find(BratAttribute oldAttr, BratDocument oldDoc) {
-  // BratAttributeEquator attEquator = new BratAttributeEquator(entityEquator,
-  // oldDoc, newDoc);
-  // for (BratAttribute newAttr : newDoc.getAttributes()) {
-  // if (attEquator.equate(oldAttr, newAttr)) {
-  // return newAttr;
-  // }
-  // }
-  // return null;
-  // }
 
   // map: old --> new
   private BratNote find(BratNote oldNote, Map<String, String> idMap) {
@@ -125,15 +114,14 @@ public class BratMerge {
             idMap.containsKey(oldEvent.getTriggerId()),
             "dont contain: " + oldEvent.getTriggerId());
         newEvent.setTriggerId(idMap.get(oldEvent.getTriggerId()));
-
-        for (Pair<String, String> arg : oldEvent.getArguments()) {
-          // skip recursive events "E"
-          if (arg.getValue().startsWith("E")) {
-            continue;
-          }
-          Validate.isTrue(idMap.containsKey(arg.getValue()), "dont contain: "
-              + arg.getValue());
-          newEvent.addArgument(arg.getKey(), idMap.get(arg.getValue()));
+        for (String role : oldEvent.getArguments().keySet()) {
+          String argId = oldEvent.getArgId(role);
+          checkArgument(
+              argId.startsWith("T"),
+              "Does not support recursive matching: %d",
+              oldEvent);
+          checkArgument(idMap.containsKey(argId), "dont contain: %s", argId);
+          newEvent.putArgument(role, idMap.get(argId));
         }
         newDoc.addAnnotation(newEvent);
       }
@@ -148,10 +136,14 @@ public class BratMerge {
         newRel.setId("R" + newDoc.getRelations().size());
         newRel.setType(oldRel.getType());
 
-        for (Pair<String, String> arg : oldRel.getArguments()) {
-          Validate.isTrue(idMap.containsKey(arg.getValue()), "dont contain: "
-              + arg.getValue());
-          newRel.addArgument(arg.getKey(), idMap.get(arg.getValue()));
+        for (String role : oldRel.getArguments().keySet()) {
+          String argId = oldRel.getArgId(role);
+          checkArgument(
+              argId.startsWith("T"),
+              "Does not support recursive matching: %d",
+              oldRel);
+          checkArgument(idMap.containsKey(argId), "dont contain: %s", argId);
+          newRel.putArgument(role, idMap.get(argId));
         }
         newDoc.addAnnotation(newRel);
       }
@@ -182,10 +174,9 @@ public class BratMerge {
         newRel.setId("*");
         newRel.setType(oldRel.getType());
 
-        for (Pair<String, String> arg : oldRel.getArguments()) {
-          Validate.isTrue(idMap.containsKey(arg.getValue()), "dont contain: "
-              + arg.getValue());
-          newRel.addArgument(arg.getKey(), idMap.get(arg.getValue()));
+        for (String argId : oldRel.getArgIds()) {
+          checkArgument(idMap.containsKey(argId), "dont contain: %s", argId);
+          newRel.addArgId(idMap.get(argId));
         }
         newDoc.addAnnotation(newRel);
       }
@@ -229,70 +220,6 @@ public class BratMerge {
 
   }
 
-  class BratEventEquator implements Equator<BratEvent> {
-
-    private final BratDocument doc1;
-    private final BratDocument doc2;
-
-    public BratEventEquator(
-        BratDocument doc1,
-        BratDocument doc2) {
-      this.doc1 = doc1;
-      this.doc2 = doc2;
-    }
-
-    @Override
-    public boolean equate(BratEvent e1, BratEvent e2) {
-      // type
-      if (!e1.getType().equals(e2.getType())) {
-        return false;
-      }
-      // trigger
-      if (!entityEquator.equate(
-          doc1.getEntity(e1.getTriggerId()),
-          doc2.getEntity(e2.getTriggerId()))) {
-        return false;
-      }
-
-      // arg
-      boolean[] founds = new boolean[e2.numberOfArguments()];
-      Arrays.fill(founds, false);
-
-      for (int i = 0; i < e1.numberOfArguments(); i++) {
-        Pair<String, String> p1 = e1.getArgPair(i);
-
-        boolean foundP1 = false;
-        for (int j = 0; j < e2.numberOfArguments(); j++) {
-          Pair<String, String> p2 = e2.getArgPair(j);
-
-          if (p1.getKey().equals(p2.getKey())
-              && entityEquator.equate(
-                  doc1.getEntity(p1.getValue()),
-                  doc2.getEntity(p2.getValue()))) {
-            founds[j] = true;
-            foundP1 = true;
-          }
-        }
-
-        if (!foundP1) {
-          return false;
-        }
-      }
-
-      for (int i = 0; i < founds.length; i++) {
-        if (!founds[i]) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    @Override
-    public int hash(BratEvent arg0) {
-      throw new UnsupportedOperationException("hash() is not supported yet.");
-    }
-  }
-
   class BratRelationEquator implements Equator<BratRelation> {
 
     BratDocument doc1;
@@ -310,34 +237,34 @@ public class BratMerge {
       // type
       if (!r1.getType().equals(r2.getType())) {
         return false;
+      } else if (!contains(r1, r2)) {
+        return false;
+      } else {
+        return contains(r2, r1);
       }
-      // arg
-      boolean[] founds = new boolean[r2.numberOfArguments()];
-      Arrays.fill(founds, false);
+    }
 
-      for (int i = 0; i < r1.numberOfArguments(); i++) {
-        Pair<String, String> p1 = r1.getArgPair(i);
-
-        boolean foundP1 = false;
-        for (int j = 0; j < r2.numberOfArguments(); j++) {
-          Pair<String, String> p2 = r2.getArgPair(j);
-
-          if (p1.getKey().equals(p2.getKey())
-              && entityEquator.equate(
-                  (BratEntity) doc1.getAnnotation(p1.getValue()),
-                  (BratEntity) doc2.getAnnotation(p2.getValue()))) {
-            founds[j] = true;
-            foundP1 = true;
-          }
-        }
-
-        if (!foundP1) {
+    /**
+     * for every role:arg in r1, r2 contains role:arg
+     */
+    private boolean contains(BratRelation r1, BratRelation r2) {
+      for (String role1 : r1.getArguments().keySet()) {
+        String argId1 = r1.getArgId(role1);
+        checkArgument(
+            argId1.startsWith("T"),
+            "Does not support recursive matching: %d",
+            r1);
+        if (!r2.containsRole(role1)) {
           return false;
         }
-      }
-
-      for (int i = 0; i < founds.length; i++) {
-        if (!founds[i]) {
+        String argId2 = r2.getArgId(role1);
+        checkArgument(
+            argId2.startsWith("T"),
+            "Does not support recursive matching: %d",
+            r2);
+        if (!entityEquator.equate(
+            (BratEntity) doc1.getAnnotation(argId1),
+            (BratEntity) doc2.getAnnotation(argId2))) {
           return false;
         }
       }
@@ -346,6 +273,60 @@ public class BratMerge {
 
     @Override
     public int hash(BratRelation arg0) {
+      throw new UnsupportedOperationException("hash() is not supported yet.");
+    }
+  }
+
+  class BratEquivRelationEquator implements Equator<BratEquivRelation> {
+
+    BratDocument doc1;
+    BratDocument doc2;
+
+    public BratEquivRelationEquator(
+        BratDocument doc1,
+        BratDocument doc2) {
+      this.doc1 = doc1;
+      this.doc2 = doc2;
+    }
+
+    @Override
+    public boolean equate(BratEquivRelation r1, BratEquivRelation r2) {
+      // type
+      if (!r1.getType().equals(r2.getType())) {
+        return false;
+      } else if (!contains(r1, r2)) {
+        return false;
+      } else {
+        return contains(r2, r1);
+      }
+    }
+
+    /**
+     * for every role:arg in r1, r2 contains role:arg
+     */
+    private boolean contains(BratEquivRelation r1, BratEquivRelation r2) {
+      for (String argId1 : r1.getArgIds()) {
+        checkArgument(
+            argId1.startsWith("T"),
+            "Does not support recursive matching: %s",
+            r1);
+        for (String argId2 : r2.getArgIds()) {
+          checkArgument(
+              argId2.startsWith("T"),
+              "Does not support recursive matching: %s",
+              r2);
+          if (entityEquator.equate(
+              (BratEntity) doc1.getAnnotation(argId1),
+              (BratEntity) doc2.getAnnotation(argId2))) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    @Override
+    public int hash(BratEquivRelation arg0) {
       throw new UnsupportedOperationException("hash() is not supported yet.");
     }
   }

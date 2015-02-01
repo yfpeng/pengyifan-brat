@@ -49,6 +49,11 @@ public class BratDocument {
     this.text = text;
   }
 
+  /**
+   * Returns text of the original documents input
+   * 
+   * @return text of the original documents input
+   */
   public String getText() {
     return text;
   }

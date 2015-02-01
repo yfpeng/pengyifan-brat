@@ -9,9 +9,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
-
-import com.google.common.collect.Range;
 
 public class BratIOUtils {
 
@@ -22,22 +19,22 @@ public class BratIOUtils {
       throws IOException {
     StringBuilder sb = new StringBuilder();
     for (BratEntity entity : doc.getEntities()) {
-      sb.append(write(entity)).append('\n');
+      sb.append(entity).append('\n');
     }
     for (BratRelation relation : doc.getRelations()) {
-      sb.append(write(relation)).append('\n');
+      sb.append(relation).append('\n');
     }
     for (BratEvent event : doc.getEvents()) {
-      sb.append(write(event)).append('\n');
+      sb.append(event).append('\n');
     }
     for (BratAttribute att : doc.getAttributes()) {
-      sb.append(write(att)).append('\n');
+      sb.append(att).append('\n');
     }
     for (BratEquivRelation equivRel : doc.getEquivRelations()) {
-      sb.append(write(equivRel)).append('\n');
+      sb.append(equivRel).append('\n');
     }
     for (BratNote note : doc.getNotes()) {
-      sb.append(write(note)).append('\n');
+      sb.append(note).append('\n');
     }
     writer.write(sb.toString());
     writer.close();
@@ -140,7 +137,7 @@ public class BratIOUtils {
 
     for (int i = 1; i < toks.length; i++) {
       index = toks[i].indexOf(':');
-      event.addArgument(
+      event.putArgument(
           toks[i].substring(0, index),
           toks[i].substring(index + 1));
     }
@@ -159,7 +156,7 @@ public class BratIOUtils {
 
     for (int i = 1; i < toks.length; i++) {
       int index = toks[i].indexOf(':');
-      relation.addArgument(
+      relation.putArgument(
           toks[i].substring(0, index),
           toks[i].substring(index + 1));
     }
@@ -190,7 +187,7 @@ public class BratIOUtils {
     int space = tabs[1].indexOf(' ');
     relation.setType(tabs[1].substring(0, space));
     for (String e : tabs[1].substring(space + 1).split(" ")) {
-      relation.addArgument("Arg", e);
+      relation.addArgId(e);
     }
     return relation;
   }
@@ -207,67 +204,5 @@ public class BratIOUtils {
       att.addAttribute(toks[i]);
     }
     return att;
-  }
-
-  public static String write(BratEntity entity) {
-    StringBuilder sb = new StringBuilder();
-    // id \t type
-    sb.append(entity.getId()).append('\t').append(entity.getType()).append(' ');
-    // span
-    StringJoiner joiner = new StringJoiner(";");
-    for (Range<Integer> range : entity.getSpans().asRanges()) {
-      joiner.add(range.lowerEndpoint() + " " + range.upperEndpoint());
-    }
-    sb.append(joiner.toString());
-    // text
-    sb.append('\t').append(entity.getText());
-    return sb.toString();
-  }
-
-  public static String write(BratEvent event) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(event.getId()).append('\t').append(event.getType()).append(':')
-        .append(event.getTriggerId());
-    for (int i = 0; i < event.numberOfArguments(); i++) {
-      sb.append(' ').append(event.getArgRole(i)).append(':')
-          .append(event.getArgId(i));
-    }
-    return sb.toString();
-  }
-
-  public static String write(BratRelation relation) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(relation.getId()).append('\t').append(relation.getType());
-    for (int i = 0; i < relation.numberOfArguments(); i++) {
-      sb.append(' ').append(relation.getArgRole(i)).append(':')
-          .append(relation.getArgId(i));
-    }
-    return sb.toString();
-  }
-
-  public static String write(BratEquivRelation relation) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(relation.getId()).append('\t').append(relation.getType());
-    for (int i = 0; i < relation.numberOfArguments(); i++) {
-      sb.append(' ').append(relation.getArgId(i));
-    }
-    return sb.toString();
-  }
-
-  public static String write(BratAttribute attribute) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(attribute.getId()).append('\t').append(attribute.getType())
-        .append(' ').append(attribute.getRefId());
-    for (int i = 0; i < attribute.numberOfAttributes(); i++) {
-      sb.append(' ').append(attribute.getAttribute(i));
-    }
-    return sb.toString();
-  }
-
-  public static String write(BratNote note) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(note.getId()).append('\t').append(note.getType()).append(' ')
-        .append(note.getRefId()).append('\t').append(note.getText());
-    return sb.toString();
   }
 }

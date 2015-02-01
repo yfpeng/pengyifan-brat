@@ -2,16 +2,30 @@ package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.StringJoiner;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 
+/**
+ * Each entity annotation has a unique ID and is defined by type (e.g. Person
+ * or Organization) and the span of characters containing the entity mention
+ * (represented as a "start end" offset pair).
+ * 
+ * <pre>
+ * T1  Organization 0 4  Sony
+ * T3  Organization 33 41  Ericsson
+ * T3  Country 75 81 Sweden
+ * </pre>
+ * 
+ * Each line contains one text-bound annotation identifying the entity mention
+ * in text.
+ */
 public class BratEntity extends BratAnnotation {
 
   private RangeSet<Integer> rangeSet;
@@ -27,6 +41,12 @@ public class BratEntity extends BratAnnotation {
     setType(ent.getType());
     setText(ent.getText());
     getSpans().addAll(ent.getSpans());
+  }
+
+  @Override
+  public void setId(String id) {
+    checkArgument(id.startsWith("T"));
+    super.setId(id);
   }
 
   /**
@@ -108,11 +128,15 @@ public class BratEntity extends BratAnnotation {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-        .append("id", getId())
-        .append("type", getType())
-        .append("text", getText())
-        .append("spans", getSpans())
-        .toString();
+    StringBuilder sb = new StringBuilder(super.toString());
+    // span
+    StringJoiner joiner = new StringJoiner(";");
+    for (Range<Integer> range : getSpans().asRanges()) {
+      joiner.add(range.lowerEndpoint() + " " + range.upperEndpoint());
+    }
+    sb.append(' ').append(joiner.toString());
+    // text
+    sb.append('\t').append(getText());
+    return sb.toString();
   }
 }
