@@ -18,7 +18,7 @@ public class BratAnnotationsReader implements Closeable {
   private LineNumberReader reader;
   private String docId;
   private String text;
-  
+
   public BratAnnotationsReader(Reader reader) {
     this(reader, null, null);
   }
@@ -44,21 +44,28 @@ public class BratAnnotationsReader implements Closeable {
       if (line.isEmpty()) {
         continue;
       }
-      if (line.startsWith("T")) {
+      char firstChar = line.charAt(0);
+      switch (firstChar) {
+      case 'T':
         doc.addAnnotation(BratEntity.parseEntity(line));
-      } else if (line.startsWith("E")) {
+        break;
+      case 'E':
         doc.addAnnotation(BratEvent.parseEvent(line));
-      } else if (line.startsWith("R")) {
+        break;
+      case 'R':
         doc.addAnnotation(BratRelation.parseRelation(line));
-      } else if (line.startsWith("#")) {
+        break;
+      case '#':
         doc.addAnnotation(BratNote.parseNote(line));
-      } else if (line.startsWith("A")) {
+        break;
+      case 'A':
+      case 'M':
         doc.addAnnotation(BratAttribute.parseAttribute(line));
-      } else if (line.startsWith("M")) {
-        doc.addAnnotation(BratAttribute.parseAttribute(line));
-      } else if (line.startsWith("*")) {
+        break;
+      case '*':
         doc.addAnnotation(BratEquivRelation.parseEquivRelation(line));
-      } else {
+        break;
+      default:
         throw new IllegalArgumentException(String.format(
             "cannot parse line: %s",
             line));

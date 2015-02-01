@@ -1,6 +1,7 @@
 package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Relations have a unique ID and are defined by their type (e.g. Origin,
@@ -56,7 +57,10 @@ public class BratRelation extends BratBaseRelation {
 
   @Override
   public void setId(String id) {
-    checkArgument(id.startsWith("R"), "ID should start with R");
+    checkNotNull(id, "ID should not be null");
+    checkArgument(
+        id.length() > 0 && id.charAt(0) == 'R',
+        "ID should start with R");
     super.setId(id);
   }
 

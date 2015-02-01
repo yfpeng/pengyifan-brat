@@ -1,7 +1,5 @@
 package com.pengyifan.brat;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,6 +29,19 @@ public abstract class BratBaseRelation extends BratAnnotation {
     return arguments.containsKey(role);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof BratBaseRelation)) {
+      return false;
+    }
+    BratBaseRelation rhs = (BratBaseRelation) o;
+    return super.equals(o)
+        && Objects.equals(arguments, rhs.arguments);
+  }
+
   /**
    * Returns the entity or event filling that role.
    * 
@@ -50,31 +61,12 @@ public abstract class BratBaseRelation extends BratAnnotation {
     return Objects.hash(super.hashCode(), arguments);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj == null || obj.getClass() != getClass()) {
-      return false;
-    }
-    BratBaseRelation rhs = (BratBaseRelation) obj;
-    return super.equals(obj)
-        && Objects.equals(arguments, rhs.arguments);
-  }
-
   /**
    * 
    * @param role task-specific argument role
    * @param id the entity or event filling that role
    */
   public void putArgument(String role, String id) {
-    checkArgument(
-        !arguments.containsKey(role),
-        "Duplicated role: %s: %s",
-        role,
-        id);
     arguments.put(role, id);
   }
-
 }

@@ -1,6 +1,7 @@
 package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -109,15 +110,15 @@ public class BratEntity extends BratAnnotation {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
+  public boolean equals(Object o) {
+    if (o == this) {
       return true;
     }
-    if (obj == null || obj.getClass() != getClass()) {
+    if (!(o instanceof BratEntity)) {
       return false;
     }
-    BratEntity rhs = (BratEntity) obj;
-    return super.equals(obj)
+    BratEntity rhs = (BratEntity) o;
+    return super.equals(o)
         && Objects.equals(text, rhs.text)
         && Objects.equals(rangeSet, rhs.rangeSet);
   }
@@ -141,7 +142,10 @@ public class BratEntity extends BratAnnotation {
 
   @Override
   public void setId(String id) {
-    checkArgument(id.startsWith("T"), "ID should start with T");
+    checkNotNull(id, "ID should not be null");
+    checkArgument(
+        id.length() > 0 && id.charAt(0) == 'T',
+        "ID should start with T");
     super.setId(id);
   }
 

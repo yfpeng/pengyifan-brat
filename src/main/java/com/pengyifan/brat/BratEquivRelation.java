@@ -71,6 +71,19 @@ public class BratEquivRelation extends BratAnnotation {
     return argIds.contains(argId);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof BratEquivRelation)) {
+      return false;
+    }
+    BratEquivRelation rhs = (BratEquivRelation) o;
+    return super.equals(o)
+        && Objects.equals(argIds, rhs.argIds);
+  }
+
   public Set<String> getArgIds() {
     return argIds;
   }
@@ -83,6 +96,11 @@ public class BratEquivRelation extends BratAnnotation {
   @Override
   public String getType() {
     return "Equiv";
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), argIds);
   }
 
   @Override
@@ -102,23 +120,5 @@ public class BratEquivRelation extends BratAnnotation {
       sb.append(' ').append(argId);
     }
     return sb.toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), argIds);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj == null || obj.getClass() != getClass()) {
-      return false;
-    }
-    BratEquivRelation rhs = (BratEquivRelation) obj;
-    return super.equals(obj)
-        && Objects.equals(argIds, rhs.argIds);
   }
 }

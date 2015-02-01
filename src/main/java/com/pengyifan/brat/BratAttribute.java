@@ -1,6 +1,7 @@
 package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Objects;
 import java.util.Set;
@@ -75,6 +76,20 @@ public class BratAttribute extends BratAnnotation {
     getAttributes().add(value);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof BratAttribute)) {
+      return false;
+    }
+    BratAttribute rhs = (BratAttribute) o;
+    return super.equals(o)
+        && Objects.equals(refId, rhs.refId)
+        && Objects.equals(attributes, rhs.attributes);
+  }
+
   public Set<String> getAttributes() {
     return attributes;
   }
@@ -87,13 +102,21 @@ public class BratAttribute extends BratAnnotation {
     return refId;
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), refId, attributes);
+  }
+
   public int numberOfAttributes() {
     return getAttributes().size();
   }
 
   @Override
   public void setId(String id) {
-    checkArgument(id.startsWith("A"));
+    checkNotNull(id, "ID should not be null");
+    checkArgument(
+        id.length() > 0 && id.charAt(0) == 'A',
+        "ID should start with A");
     super.setId(id);
   }
 
@@ -113,24 +136,5 @@ public class BratAttribute extends BratAnnotation {
       sb.append(' ').append(attribute);
     }
     return sb.toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), refId, attributes);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj == null || obj.getClass() != getClass()) {
-      return false;
-    }
-    BratAttribute rhs = (BratAttribute) obj;
-    return super.equals(obj)
-        && Objects.equals(refId, rhs.refId)
-        && Objects.equals(attributes, rhs.attributes);
   }
 }

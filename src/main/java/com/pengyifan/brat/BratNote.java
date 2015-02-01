@@ -1,6 +1,7 @@
 package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Objects;
 
@@ -43,6 +44,7 @@ public class BratNote extends BratAnnotation {
 
     return note;
   }
+
   private String refId;
 
   private String text;
@@ -50,11 +52,25 @@ public class BratNote extends BratAnnotation {
   public BratNote() {
     super();
   }
-  
+
   public BratNote(BratNote note) {
     super(note);
     refId = note.refId;
     text = note.text;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof BratNote)) {
+      return false;
+    }
+    BratNote rhs = (BratNote) o;
+    return super.equals(o)
+        && Objects.equals(refId, rhs.refId)
+        && Objects.equals(text, rhs.text);
   }
 
   /**
@@ -73,8 +89,16 @@ public class BratNote extends BratAnnotation {
   }
 
   @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), refId, text);
+  }
+
+  @Override
   public void setId(String id) {
-    checkArgument(id.startsWith("#"), "ID should start with #");
+    checkNotNull(id, "ID should not be null");
+    checkArgument(
+        id.length() > 0 && id.charAt(0) == '#',
+        "ID should start with #");
     super.setId(id);
   }
 
@@ -98,24 +122,5 @@ public class BratNote extends BratAnnotation {
     StringBuilder sb = new StringBuilder(super.toString());
     sb.append(' ').append(getRefId()).append('\t').append(getText());
     return sb.toString();
-  }
-  
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), refId, text);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj == null || obj.getClass() != getClass()) {
-      return false;
-    }
-    BratNote rhs = (BratNote) obj;
-    return super.equals(obj)
-        && Objects.equals(refId, rhs.refId)
-        && Objects.equals(text, rhs.text);
   }
 }

@@ -118,7 +118,7 @@ public class BratMerge {
         for (String role : oldEvent.getArguments().keySet()) {
           String argId = oldEvent.getArgId(role);
           checkArgument(
-              argId.startsWith("T"),
+              argId.length() > 0 && argId.charAt(0) == 'T',
               "Does not support recursive matching: %d",
               oldEvent);
           checkArgument(idMap.containsKey(argId), "dont contain: %s", argId);
@@ -140,7 +140,7 @@ public class BratMerge {
         for (String role : oldRel.getArguments().keySet()) {
           String argId = oldRel.getArgId(role);
           checkArgument(
-              argId.startsWith("T"),
+              argId.length() > 0 && argId.charAt(0) == 'T',
               "Does not support recursive matching: %d",
               oldRel);
           checkArgument(idMap.containsKey(argId), "dont contain: %s", argId);
@@ -252,7 +252,7 @@ public class BratMerge {
       for (String role1 : r1.getArguments().keySet()) {
         String argId1 = r1.getArgId(role1);
         checkArgument(
-            argId1.startsWith("T"),
+            argId1.length() > 0 && argId1.charAt(0) == 'T',
             "Does not support recursive matching: %d",
             r1);
         if (!r2.containsRole(role1)) {
@@ -260,7 +260,7 @@ public class BratMerge {
         }
         String argId2 = r2.getArgId(role1);
         checkArgument(
-            argId2.startsWith("T"),
+            argId2.length() > 0 && argId2.charAt(0) == 'T',
             "Does not support recursive matching: %d",
             r2);
         if (!entityEquator.equate(
@@ -308,12 +308,12 @@ public class BratMerge {
     private boolean contains(BratEquivRelation r1, BratEquivRelation r2) {
       for (String argId1 : r1.getArgIds()) {
         checkArgument(
-            argId1.startsWith("T"),
+            argId1.length() > 0 && argId1.charAt(0) == 'T',
             "Does not support recursive matching: %s",
             r1);
         for (String argId2 : r2.getArgIds()) {
           checkArgument(
-              argId2.startsWith("T"),
+              argId2.length() > 0 && argId2.charAt(0) == 'T',
               "Does not support recursive matching: %s",
               r2);
           if (entityEquator.equate(

@@ -1,6 +1,7 @@
 package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Objects;
 
@@ -38,7 +39,7 @@ import java.util.Objects;
  * ID\tTYPE:TRIGGER [ROLE1:PART1 ROLE2:PART2 ...]
  */
 public class BratEvent extends BratBaseRelation {
-  
+
   public static BratEvent parseEvent(String s) {
 
     String toks[] = s.split("\\t+");
@@ -50,7 +51,7 @@ public class BratEvent extends BratBaseRelation {
     toks = toks[1].split(" ");
     int index = toks[0].indexOf(':');
     checkArgument(index != -1, "Illegal format: %s", s);
-    
+
     event.setType(toks[0].substring(0, index));
     event.setTriggerId(toks[0].substring(index + 1));
 
@@ -64,26 +65,29 @@ public class BratEvent extends BratBaseRelation {
 
     return event;
   }
-  
+
   private String triggerId;
 
   public BratEvent() {
     super();
   }
-  
+
   public BratEvent(BratEvent event) {
     super(event);
     triggerId = event.triggerId;
   }
 
   @Override
-  public void setId(String id) {
-    checkArgument(id.startsWith("E"), "ID should start with E");
-    super.setId(id);
-  }
-
-  public void setTriggerId(String triggerId) {
-    this.triggerId = triggerId;
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof BratEvent)) {
+      return false;
+    }
+    BratEvent rhs = (BratEvent) o;
+    return super.equals(o)
+        && Objects.equals(triggerId, rhs.triggerId);
   }
 
   /**
@@ -100,16 +104,16 @@ public class BratEvent extends BratBaseRelation {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (obj == null || obj.getClass() != getClass()) {
-      return false;
-    }
-    BratEvent rhs = (BratEvent) obj;
-    return super.equals(obj)
-        && Objects.equals(triggerId, rhs.triggerId);
+  public void setId(String id) {
+    checkNotNull(id, "ID should not be null");
+    checkArgument(
+        id.length() > 0 && id.charAt(0) == 'E',
+        "ID should start with E");
+    super.setId(id);
+  }
+
+  public void setTriggerId(String triggerId) {
+    this.triggerId = triggerId;
   }
 
   @Override
