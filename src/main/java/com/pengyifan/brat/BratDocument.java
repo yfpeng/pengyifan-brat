@@ -1,36 +1,27 @@
 package com.pengyifan.brat;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class BratDocument {
 
-  private List<BratEvent> events;
-  private List<BratRelation> relations;
-  private List<BratEntity> entities;
-  private List<BratEquivRelation> equivRelations;
-  private List<BratAttribute> attributes;
-  private List<BratNote> notes;
   private String text;
   private String id;
   private Map<String, BratAnnotation> annotationMap;
 
   public BratDocument() {
-    entities = Lists.newArrayList();
-    relations = Lists.newArrayList();
-    equivRelations = Lists.newArrayList();
-    events = Lists.newArrayList();
-    attributes = Lists.newArrayList();
-    notes = Lists.newArrayList();
     annotationMap = Maps.newHashMap();
   }
 
@@ -81,22 +72,7 @@ public class BratDocument {
   }
 
   public void addAnnotation(BratAnnotation ann) {
-    if (ann instanceof BratEntity) {
-      getEntities().add((BratEntity) ann);
-    } else if (ann instanceof BratEvent) {
-      getEvents().add((BratEvent) ann);
-    } else if (ann instanceof BratEquivRelation) {
-      getEquivRelations().add((BratEquivRelation) ann);
-    } else if (ann instanceof BratRelation) {
-      getRelations().add((BratRelation) ann);
-    } else if (ann instanceof BratAttribute) {
-      getAttributes().add((BratAttribute) ann);
-    } else if (ann instanceof BratNote) {
-      getNotes().add((BratNote) ann);
-    } else {
-      Validate.isTrue(false, "annotation not instanceof %s", ann);
-    }
-    Validate.isTrue(
+    checkArgument(
         !annotationMap.containsKey(ann.getId()),
         "already have %s",
         ann.getId());
@@ -107,28 +83,36 @@ public class BratDocument {
     return annotationMap.values();
   }
 
-  public List<BratEvent> getEvents() {
-    return events;
+  public Collection<BratEvent> getEvents() {
+    return getAnnotations().stream().filter(ann -> ann instanceof BratEvent)
+        .map(ann -> (BratEvent) ann).collect(Collectors.toSet());
   }
 
-  public List<BratEntity> getEntities() {
-    return entities;
+  public Collection<BratEntity> getEntities() {
+    return getAnnotations().stream().filter(ann -> ann instanceof BratEntity)
+        .map(ann -> (BratEntity) ann).collect(Collectors.toSet());
   }
 
-  public List<BratRelation> getRelations() {
-    return relations;
+  public Collection<BratRelation> getRelations() {
+    return getAnnotations().stream().filter(ann -> ann instanceof BratRelation)
+        .map(ann -> (BratRelation) ann).collect(Collectors.toSet());
   }
 
-  public List<BratAttribute> getAttributes() {
-    return attributes;
+  public Collection<BratAttribute> getAttributes() {
+    return getAnnotations().stream()
+        .filter(ann -> ann instanceof BratAttribute)
+        .map(ann -> (BratAttribute) ann).collect(Collectors.toSet());
   }
 
-  public List<BratEquivRelation> getEquivRelations() {
-    return equivRelations;
+  public Collection<BratEquivRelation> getEquivRelations() {
+    return getAnnotations().stream()
+        .filter(ann -> ann instanceof BratEquivRelation)
+        .map(ann -> (BratEquivRelation) ann).collect(Collectors.toSet());
   }
 
-  public List<BratNote> getNotes() {
-    return notes;
+  public Collection<BratNote> getNotes() {
+    return getAnnotations().stream().filter(ann -> ann instanceof BratNote)
+        .map(ann -> (BratNote) ann).collect(Collectors.toSet());
   }
 
   /**
@@ -174,5 +158,27 @@ public class BratDocument {
         .append("text", getText())
         .append("annotations", getAnnotations())
         .toString();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        id,
+        text,
+        annotationMap);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof BratDocument)) {
+      return false;
+    }
+    BratDocument rhs = (BratDocument) o;
+    return Objects.equals(id, rhs.id)
+        && Objects.equals(text, rhs.text)
+        && Objects.equals(annotationMap, rhs.annotationMap);
   }
 }
