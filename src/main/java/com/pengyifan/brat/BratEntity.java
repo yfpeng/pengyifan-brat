@@ -41,6 +41,9 @@ import com.google.common.collect.TreeRangeSet;
  * </pre>
  * 
  * with multiple START END pairs separated by semicolons.
+ * 
+ * @since 1.0.0
+ * @author "Yifan Peng"
  */
 public class BratEntity extends BratAnnotation {
 
@@ -86,6 +89,7 @@ public class BratEntity extends BratAnnotation {
   }
 
   /**
+   * Adds one span of the annotation.
    * 
    * @param start the index of the first character of the annotated span in the
    *          text
@@ -96,7 +100,9 @@ public class BratEntity extends BratAnnotation {
   }
 
   /**
-   * [start-offset, end-offset)
+   * Adds one span of the annotation. Range: [start-offset, end-offset).
+   * 
+   * @param span span of the annotation
    */
   public void addSpan(Range<Integer> span) {
     checkArgument(
@@ -108,10 +114,20 @@ public class BratEntity extends BratAnnotation {
     addSpan(span.lowerEndpoint(), span.upperEndpoint());
   }
 
+  /**
+   * Return the beginning character offset of the annotation.
+   * 
+   * @return the beginning character offset of the annotation
+   */
   public int beginPosition() {
     return rangeSet.span().lowerEndpoint();
   }
 
+  /**
+   * Return the ending character offset of the annotation.
+   * 
+   * @return the ending character offset of the annotation
+   */
   public int endPosition() {
     return rangeSet.span().upperEndpoint();
   }
@@ -130,11 +146,17 @@ public class BratEntity extends BratAnnotation {
         && Objects.equals(rangeSet, rhs.rangeSet);
   }
 
+  /**
+   * Returns all discontinuous spans.
+   * 
+   * @return all discontinuous spans
+   */
   public RangeSet<Integer> getSpans() {
     return rangeSet;
   }
 
   /**
+   * Returns the text spanned by the annotation.
    * 
    * @return the text spanned by the annotation
    */
@@ -156,6 +178,11 @@ public class BratEntity extends BratAnnotation {
     super.setId(id);
   }
 
+  /**
+   * Sets the text spanned by the annotation.
+   * 
+   * @param text the text spanned by the annotation
+   */
   public void setText(String text) {
     this.text = text;
   }
@@ -174,6 +201,11 @@ public class BratEntity extends BratAnnotation {
     return sb.toString();
   }
 
+  /**
+   * Returns the total span of this annotation.
+   * 
+   * @return the total span of this annotation
+   */
   public Range<Integer> totalSpan() {
     return getSpans().span();
   }

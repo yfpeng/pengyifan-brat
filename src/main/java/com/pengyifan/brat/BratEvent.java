@@ -38,6 +38,10 @@ import java.util.Objects;
  * 
  * <pre>
  * ID\tTYPE:TRIGGER [ROLE1:PART1 ROLE2:PART2 ...]
+ * </pre>
+ * 
+ * @since 1.0.0
+ * @author "Yifan Peng"
  */
 public class BratEvent extends BratBaseRelation {
 

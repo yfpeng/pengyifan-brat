@@ -27,6 +27,10 @@ import java.util.Objects;
  * 
  * <pre>
  * ID\tTYPE REFID\tNOTE
+ * </pre>
+ * 
+ * @since 1.0.0
+ * @author "Yifan Peng"
  */
 public class BratNote extends BratAnnotation {
 

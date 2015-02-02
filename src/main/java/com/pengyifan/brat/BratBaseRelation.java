@@ -7,6 +7,9 @@ import com.google.common.collect.Maps;
 
 /**
  * Base class for all relations/events.
+ * 
+ * @since 1.1.0
+ * @author "Yifan Peng"
  */
 public abstract class BratBaseRelation extends BratAnnotation {
 
@@ -19,12 +22,18 @@ public abstract class BratBaseRelation extends BratAnnotation {
     super();
     arguments = Maps.newHashMap();
   }
-  
+
   public BratBaseRelation(BratBaseRelation relation) {
     super(relation);
     arguments = Maps.newHashMap(relation.arguments);
   }
 
+  /**
+   * Returns true if this relation contains an argument for the specified role.
+   * 
+   * @param role the role whose presence in this relation is to be tested
+   * @return true if this relation contains an argument for the specified role
+   */
   public boolean containsRole(String role) {
     return arguments.containsKey(role);
   }
@@ -52,6 +61,11 @@ public abstract class BratBaseRelation extends BratAnnotation {
     return getArguments().get(role);
   }
 
+  /**
+   * Returns all arguments.
+   * 
+   * @return all arguments
+   */
   public Map<String, String> getArguments() {
     return arguments;
   }
@@ -62,6 +76,9 @@ public abstract class BratBaseRelation extends BratAnnotation {
   }
 
   /**
+   * Associates the specified id with the specified role in this relation. If
+   * the relation previously contained a id for the role, the old id is
+   * replaced.
    * 
    * @param role task-specific argument role
    * @param id the entity or event filling that role

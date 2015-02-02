@@ -32,6 +32,9 @@ import com.google.common.collect.Sets;
  * </pre>
  * 
  * Where "*" is the literal asterisk character.
+ * 
+ * @since 1.0.0
+ * @author "Yifan Peng"
  */
 public class BratEquivRelation extends BratAnnotation {
 

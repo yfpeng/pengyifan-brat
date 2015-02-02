@@ -25,6 +25,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * <pre>
  * ID\tTYPE [ROLE1:PART1 ROLE2:PART2 ...]
+ * </pre>
+ * 
+ * @since 1.0.0
+ * @author "Yifan Peng"
  */
 public class BratRelation extends BratBaseRelation {
 

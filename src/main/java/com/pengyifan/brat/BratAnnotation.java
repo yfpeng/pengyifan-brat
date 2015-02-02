@@ -20,6 +20,9 @@ import java.util.Objects;
  * N: normalization
  * #: note
  * </pre>
+ * 
+ * @since 1.0.0
+ * @author "Yifan Peng"
  */
 public abstract class BratAnnotation {
 
@@ -47,11 +50,21 @@ public abstract class BratAnnotation {
         && Objects.equals(type, rhs.type);
   }
 
+  /**
+   * Returns the annotation ID.
+   * 
+   * @return the annotation ID
+   */
   public String getId() {
     checkNotNull(id, "id has to be set");
     return id;
   }
 
+  /**
+   * Returns the annotation type.
+   * 
+   * @return the annotation type
+   */
   public String getType() {
     checkNotNull(type, "type has to be set");
     return type;
@@ -62,10 +75,19 @@ public abstract class BratAnnotation {
     return Objects.hash(id, type);
   }
 
+  /**
+   * Sets the annotation ID.
+   * @param id the annotation ID
+   */
   public void setId(String id) {
     this.id = id;
   }
   
+  /**
+   * Sets the annotation type.
+   * 
+   * @param type the annotation type
+   */
   public void setType(String type) {
     this.type = type;
   }

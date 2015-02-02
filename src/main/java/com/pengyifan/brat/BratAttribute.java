@@ -38,6 +38,10 @@ import com.google.common.collect.Sets;
  * 
  * <pre>
  * ID\tTYPE REFID [FLAG1 FLAG2 ...]
+ * </pre>
+ * 
+ * @since 1.0.0
+ * @author "Yifan Peng"
  */
 public class BratAttribute extends BratAnnotation {
 
@@ -79,6 +83,11 @@ public class BratAttribute extends BratAnnotation {
     attributes = Sets.newHashSet(attribute.attributes);
   }
 
+  /**
+   * Adds "flag" that specifies further aspect of referred annotations.
+   * 
+   * @param value one flag.
+   */
   public void addAttribute(String value) {
     getAttributes().add(value);
   }
@@ -97,11 +106,17 @@ public class BratAttribute extends BratAnnotation {
         && Objects.equals(attributes, rhs.attributes);
   }
 
+  /**
+   * Returns all "flags" that specify further aspects of referred annotations.
+   * 
+   * @return all "flags" that specify further aspects of referred annotations
+   */
   public Set<String> getAttributes() {
     return attributes;
   }
 
   /**
+   * Returns the ID of the annotation that the attribute marks.
    * 
    * @return the ID of the annotation that the attribute marks
    */
@@ -114,10 +129,6 @@ public class BratAttribute extends BratAnnotation {
     return Objects.hash(super.hashCode(), refId, attributes);
   }
 
-  public int numberOfAttributes() {
-    return getAttributes().size();
-  }
-
   @Override
   public void setId(String id) {
     checkNotNull(id, "ID should not be null");
@@ -128,6 +139,7 @@ public class BratAttribute extends BratAnnotation {
   }
 
   /**
+   * Sets the ID of the annotation that the attribute marks.
    * 
    * @param id the ID of the annotation that the attribute marks
    */
