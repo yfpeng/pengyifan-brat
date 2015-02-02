@@ -22,9 +22,9 @@ public class BratEntityTest {
   private static final String TYPE_2 = "TYPE2";
   private static final String TEXT_2 = "DEF";
 
-  private static final Range<Integer> SPAN_1 = Range.closed(48, 53);
-  private static final Range<Integer> SPAN_2 = Range.closed(56, 57);
-  private static final Range<Integer> SPAN_3 = Range.closed(23, 30);
+  private static final Range<Integer> SPAN_1 = Range.closedOpen(48, 53);
+  private static final Range<Integer> SPAN_2 = Range.closedOpen(56, 57);
+  private static final Range<Integer> SPAN_3 = Range.closedOpen(23, 30);
 
   private BratEntity base;
 
@@ -93,7 +93,7 @@ public class BratEntityTest {
 
   @Test
   public void test_addSpan() {
-    Range<Integer> span = Range.closedOpen(23, 30);
+    Range<Integer> span = Range.closed(23, 30);
     thrown.expect(IllegalArgumentException.class);
     base.addSpan(span);
   }

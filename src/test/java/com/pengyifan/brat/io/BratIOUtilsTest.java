@@ -2,12 +2,11 @@ package com.pengyifan.brat.io;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
-import java.nio.file.Files;
 
 import org.junit.Test;
 
@@ -21,15 +20,12 @@ public class BratIOUtilsTest {
   public void test_success()
       throws IOException {
     URL url = this.getClass().getResource("/" + ANN_FILE);
-    File expected = new File(url.getFile());
-
-    BratDocument doc = BratIOUtils.read(new FileReader(expected), "x");
+    BratDocument exptected = BratIOUtils.read(new FileReader(url.getFile()), "x");
 
     StringWriter writer = new StringWriter();
-    BratIOUtils.write(writer, doc);
-
-    assertEquals(
-        new String(Files.readAllBytes(expected.toPath())),
-        writer.toString());
+    BratIOUtils.write(writer, exptected);
+    BratDocument actual = BratIOUtils.read(new StringReader(writer.toString()), "x");
+    
+    assertEquals(exptected, actual);
   }
 }

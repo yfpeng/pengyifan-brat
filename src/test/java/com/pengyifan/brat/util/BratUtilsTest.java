@@ -2,6 +2,7 @@ package com.pengyifan.brat.util;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -22,8 +23,8 @@ public class BratUtilsTest {
     
     assertEquals(3, list.size());
     
-    list = BratUtils.filtEntities(list, "Protein");
-    assertEquals(2, list.size());
+    Collection<BratEntity> collection = BratUtils.filtEntities(list, "Protein");
+    assertEquals(2, collection.size());
   }
 
   private BratEntity createEntity(final String id, final String type) {

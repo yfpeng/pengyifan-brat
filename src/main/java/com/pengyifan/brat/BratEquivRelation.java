@@ -1,5 +1,6 @@
 package com.pengyifan.brat;
 
+import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Objects;
@@ -34,15 +35,22 @@ import com.google.common.collect.Sets;
  */
 public class BratEquivRelation extends BratAnnotation {
 
+  /**
+   * Parses the string argument as a equivalence relation annotation.
+   * 
+   * @param s a String containing the equivalence relation annotation to be
+   *          parsed
+   * @return the equivalence relation annotation represented by the argument.
+   */
   public static BratEquivRelation parseEquivRelation(String s) {
     String toks[] = s.split("\t");
-    checkArgument(toks.length == 2, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length == 2, "Illegal format: %s", s);
 
     BratEquivRelation relation = new BratEquivRelation();
     relation.setId(toks[0]);
 
     toks = toks[1].split(" ");
-    checkArgument(toks.length >= 2, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length >= 2, "Illegal format: %s", s);
 
     relation.setType(toks[0]);
     for (int i = 1; i < toks.length; i++) {
@@ -57,7 +65,7 @@ public class BratEquivRelation extends BratAnnotation {
     super();
     argIds = Sets.newHashSet();
   }
-  
+
   public BratEquivRelation(BratEquivRelation relation) {
     super(relation);
     argIds = Sets.newHashSet(relation.argIds);

@@ -1,5 +1,6 @@
 package com.pengyifan.brat;
 
+import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -29,16 +30,22 @@ import java.util.Objects;
  */
 public class BratNote extends BratAnnotation {
 
+  /**
+   * Parses the string argument as a note annotation.
+   * 
+   * @param s a String containing the note annotation to be parsed
+   * @return the note annotation represented by the argument.
+   */
   public static BratNote parseNote(String s) {
     String toks[] = s.split("\\t+");
-    checkArgument(toks.length == 3, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length == 3, "Illegal format: %s", s);
 
     BratNote note = new BratNote();
     note.setId(toks[0]);
     note.setText(toks[2]);
 
     int index = toks[1].indexOf(' ');
-    checkArgument(index != -1, "Illegal format: %s", s);
+    checkBratFormatArgument(index != -1, "Illegal format: %s", s);
     note.setType(toks[1].substring(0, index));
     note.setRefId(toks[1].substring(index + 1));
 
@@ -74,6 +81,7 @@ public class BratNote extends BratAnnotation {
   }
 
   /**
+   * Returns the ID of the annotation that the note is attached to.
    * 
    * @return the ID of the annotation that the note is attached to
    */
@@ -82,6 +90,8 @@ public class BratNote extends BratAnnotation {
   }
 
   /**
+   * Returns the text of the note.
+   * 
    * @return the text of the note
    */
   public String getText() {
@@ -103,6 +113,7 @@ public class BratNote extends BratAnnotation {
   }
 
   /**
+   * Sets the ID of the annotation that the note is attached to.
    * 
    * @param id the ID of the annotation that the note is attached to
    */
@@ -111,6 +122,8 @@ public class BratNote extends BratAnnotation {
   }
 
   /**
+   * Sets the text of the note.
+   * 
    * @param text the text of the note
    */
   public void setText(String text) {

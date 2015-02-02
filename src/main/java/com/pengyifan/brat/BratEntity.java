@@ -1,5 +1,6 @@
 package com.pengyifan.brat;
 
+import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,21 +44,27 @@ import com.google.common.collect.TreeRangeSet;
  */
 public class BratEntity extends BratAnnotation {
 
+  /**
+   * Parses the string argument as an entity annotation.
+   * 
+   * @param s a String containing the entity annotation to be parsed
+   * @return the entity annotation represented by the argument.
+   */
   public static BratEntity parseEntity(String s) {
     String toks[] = s.split("\t");
-    checkArgument(toks.length == 3, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length == 3, "Illegal format: %s", s);
 
     BratEntity entity = new BratEntity();
     entity.setId(toks[0]);
     entity.setText(toks[2]);
 
     int index = toks[1].indexOf(' ');
-    checkArgument(index != -1, "Illegal format: %s", s);
+    checkBratFormatArgument(index != -1, "Illegal format: %s", s);
     entity.setType(toks[1].substring(0, index));
 
     for (String loc : toks[1].substring(index + 1).split(";")) {
       int space = loc.indexOf(' ');
-      checkArgument(space != -1, "Illegal format: %s", s);
+      checkBratFormatArgument(space != -1, "Illegal format: %s", s);
       entity.addSpan(
           Integer.parseInt(loc.substring(0, space)),
           Integer.parseInt(loc.substring(space + 1)));
@@ -85,18 +92,18 @@ public class BratEntity extends BratAnnotation {
    * @param end the index of the first character after the annotated span
    */
   public void addSpan(int start, int end) {
-    rangeSet.add(Range.closed(start, end));
+    rangeSet.add(Range.closedOpen(start, end));
   }
 
   /**
-   * [start-offset, end-offset]
+   * [start-offset, end-offset)
    */
   public void addSpan(Range<Integer> span) {
     checkArgument(
         span.lowerBoundType() == BoundType.CLOSED,
         "start-offset has to be closed");
     checkArgument(
-        span.upperBoundType() == BoundType.CLOSED,
+        span.upperBoundType() == BoundType.OPEN,
         "end-offset has to be closed");
     addSpan(span.lowerEndpoint(), span.upperEndpoint());
   }

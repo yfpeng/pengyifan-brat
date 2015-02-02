@@ -1,5 +1,6 @@
 package com.pengyifan.brat;
 
+import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,9 +28,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class BratRelation extends BratBaseRelation {
 
+  /**
+   * Parses the string argument as a relation annotation.
+   * 
+   * @param s a String containing the relation annotation to be parsed
+   * @return the relation annotation represented by the argument.
+   */
   public static BratRelation parseRelation(String s) {
     String toks[] = s.split("\\t+");
-    checkArgument(toks.length == 2, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length == 2, "Illegal format: %s", s);
 
     BratRelation relation = new BratRelation();
     relation.setId(toks[0]);
@@ -39,7 +46,7 @@ public class BratRelation extends BratBaseRelation {
 
     for (int i = 1; i < toks.length; i++) {
       int index = toks[i].indexOf(':');
-      checkArgument(index != -1, "Illegal format: %s", s);
+      checkBratFormatArgument(index != -1, "Illegal format: %s", s);
       relation.putArgument(
           toks[i].substring(0, index),
           toks[i].substring(index + 1));

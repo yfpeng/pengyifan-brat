@@ -1,5 +1,6 @@
 package com.pengyifan.brat;
 
+import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -40,15 +41,21 @@ import com.google.common.collect.Sets;
  */
 public class BratAttribute extends BratAnnotation {
 
+  /**
+   * Parses the string argument as a attribute annotation.
+   * 
+   * @param s a String containing the attribute annotation to be parsed
+   * @return the attribute annotation represented by the argument.
+   */
   public static BratAttribute parseAttribute(String s) {
     String toks[] = s.split("\t");
-    checkArgument(toks.length == 2, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length == 2, "Illegal format: %s", s);
 
     BratAttribute att = new BratAttribute();
     att.setId(toks[0]);
 
     toks = toks[1].split(" ");
-    checkArgument(toks.length >= 2, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length >= 2, "Illegal format: %s", s);
 
     att.setType(toks[0]);
     att.setRefId(toks[1]);
@@ -132,7 +139,7 @@ public class BratAttribute extends BratAnnotation {
   public String toString() {
     StringBuilder sb = new StringBuilder(super.toString());
     sb.append(' ').append(getRefId());
-    for (String attribute: attributes) {
+    for (String attribute : attributes) {
       sb.append(' ').append(attribute);
     }
     return sb.toString();

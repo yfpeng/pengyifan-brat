@@ -1,5 +1,6 @@
 package com.pengyifan.brat;
 
+import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -40,24 +41,30 @@ import java.util.Objects;
  */
 public class BratEvent extends BratBaseRelation {
 
+  /**
+   * Parses the string argument as an event annotation.
+   * 
+   * @param s a String containing the event annotation to be parsed
+   * @return the event annotation represented by the argument.
+   */
   public static BratEvent parseEvent(String s) {
 
     String toks[] = s.split("\\t+");
-    checkArgument(toks.length == 2, "Illegal format: %s", s);
+    checkBratFormatArgument(toks.length == 2, "Illegal format: %s", s);
 
     BratEvent event = new BratEvent();
     event.setId(toks[0]);
 
     toks = toks[1].split(" ");
     int index = toks[0].indexOf(':');
-    checkArgument(index != -1, "Illegal format: %s", s);
+    checkBratFormatArgument(index != -1, "Illegal format: %s", s);
 
     event.setType(toks[0].substring(0, index));
     event.setTriggerId(toks[0].substring(index + 1));
 
     for (int i = 1; i < toks.length; i++) {
       index = toks[i].indexOf(':');
-      checkArgument(index != -1, "Illegal format: %s", s);
+      checkBratFormatArgument(index != -1, "Illegal format: %s", s);
       event.putArgument(
           toks[i].substring(0, index),
           toks[i].substring(index + 1));
