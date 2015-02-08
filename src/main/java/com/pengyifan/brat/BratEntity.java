@@ -105,12 +105,13 @@ public class BratEntity extends BratAnnotation {
    * @param span span of the annotation
    */
   public void addSpan(Range<Integer> span) {
+    checkArgument(!span.isEmpty(), "the span is empty: %s", span);
     checkArgument(
         span.lowerBoundType() == BoundType.CLOSED,
-        "start-offset has to be closed");
+        "start-offset has to be closed: %s", span);
     checkArgument(
         span.upperBoundType() == BoundType.OPEN,
-        "end-offset has to be closed");
+        "end-offset has to be closed: %s", span);
     addSpan(span.lowerEndpoint(), span.upperEndpoint());
   }
 
