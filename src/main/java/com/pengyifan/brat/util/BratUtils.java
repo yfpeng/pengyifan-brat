@@ -29,7 +29,7 @@ public final class BratUtils {
 
   public static Optional<BratEntity> getEnity(Collection<BratEntity> entities,
       int beginIndex, int endIndex) {
-    Range<Integer> range = Range.closed(beginIndex, endIndex);
+    Range<Integer> range = Range.closedOpen(beginIndex, endIndex);
     for (BratEntity entity : entities) {
       if (range.equals(entity.totalSpan())) {
         return Optional.of(entity);
