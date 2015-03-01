@@ -15,6 +15,16 @@ Within the document, individual annotations are connected to specific spans of t
 ### Getting started
 
 ```XML
+<dependency>
+  <groupId>com.pengyifan.brat</groupId>
+  <artifactId>pengyifan-brat</artifactId>
+  <version>1.1.0</version>
+</dependency>
+```
+
+or
+
+```XML
 <repositories>
     <repository>
         <id>oss-sonatype</id>
@@ -29,7 +39,7 @@ Within the document, individual annotations are connected to specific spans of t
 <dependency>
   <groupId>com.pengyifan.brat</groupId>
   <artifactId>pengyifan-brat</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 </dependency>
 ```
 
