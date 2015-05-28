@@ -87,6 +87,23 @@ public class BratEntity extends BratAnnotation {
     text = ent.text;
     rangeSet = TreeRangeSet.create(ent.rangeSet);
   }
+  
+  /**
+   * Create a new entity and shifts the location by "offset
+   * @param ent old entity
+   * @param offset shifted offset
+   * @return new entity
+   */
+  public static BratEntity shift(BratEntity ent, int offset) {
+    BratEntity newEnt = new BratEntity();
+    newEnt.setId(ent.getId());
+    newEnt.setType(ent.getType());
+    newEnt.setText(ent.getText());
+    for(Range<Integer> span: ent.getSpans().asRanges()) {
+      newEnt.addSpan(offset + span.lowerEndpoint(), offset + span.upperEndpoint());
+    }
+    return newEnt;
+  }
 
   /**
    * Adds one span of the annotation.
