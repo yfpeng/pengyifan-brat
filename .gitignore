@@ -1,9 +1,24 @@
-bin
-.svn
-output/*
-doc/*
-.directory
-*~
-\#*
-.\#*
-target
+/logs
+
+# Python
+*.pyc
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+config
+resources
