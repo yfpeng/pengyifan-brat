@@ -4,13 +4,13 @@ import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.BoundType;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeSet;
-import com.google.common.collect.TreeRangeSet;
+import com.google.common.collect.*;
 
 /**
  * Each entity annotation has a unique ID and is defined by type (e.g. Person
