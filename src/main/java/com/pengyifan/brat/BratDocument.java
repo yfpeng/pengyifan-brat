@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -47,27 +46,31 @@ public class BratDocument {
     return text;
   }
 
+
+  public boolean containsId(String id) {
+    return annotationMap.containsKey(id);
+  }
+
   public BratAnnotation getAnnotation(String id) {
-    Validate.isTrue(annotationMap.containsKey(id), "dont contain %s", id);
+    checkArgument(annotationMap.containsKey(id), "dont contain %s", id);
     return annotationMap.get(id);
   }
 
   public BratEntity getEntity(String id) {
     BratAnnotation ann = getAnnotation(id);
-    Validate.isInstanceOf(BratEntity.class, ann, "%s is not BratEntity", id);
+    checkArgument(ann instanceof BratEntity, "%s is not BratEntity", id);
     return (BratEntity) ann;
   }
 
   public BratRelation getRelation(String id) {
     BratAnnotation ann = getAnnotation(id);
-    Validate
-        .isInstanceOf(BratRelation.class, ann, "%s is not BratRelation", id);
+    checkArgument(ann instanceof BratRelation, "%s is not BratRelation", id);
     return (BratRelation) ann;
   }
 
   public BratEvent getEvent(String id) {
     BratAnnotation ann = getAnnotation(id);
-    Validate.isInstanceOf(BratEvent.class, ann, "%s is not BratEvent", id);
+    checkArgument(ann instanceof BratEvent, "%s is not BratEvent", id);
     return (BratEvent) ann;
   }
 
