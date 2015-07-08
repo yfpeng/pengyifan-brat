@@ -238,17 +238,18 @@ public class BratMerge {
       // type
       if (!r1.getType().equals(r2.getType())) {
         return false;
-      } else if (!contains(r1, r2)) {
+      } else if (!contains(r1, r2, doc1, doc2)) {
         return false;
       } else {
-        return contains(r2, r1);
+        return contains(r2, r1, doc2, doc1);
       }
     }
 
     /**
      * for every role:arg in r1, r2 contains role:arg
      */
-    private boolean contains(BratBaseRelation r1, BratBaseRelation r2) {
+    private boolean contains(BratBaseRelation r1, BratBaseRelation r2,
+        BratDocument doc1, BratDocument doc2) {
       for (String role1 : r1.getArguments().keySet()) {
         String argId1 = r1.getArgId(role1);
         checkArgument(
