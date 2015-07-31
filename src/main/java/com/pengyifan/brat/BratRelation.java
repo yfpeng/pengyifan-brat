@@ -78,9 +78,9 @@ public class BratRelation extends BratBaseRelation {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder(super.toString());
-    for (String role : getArguments().keySet()) {
-      sb.append(' ').append(role).append(':').append(getArgId(role));
-    }
+    getArguments().keySet().stream()
+        .sorted()
+        .forEach(role -> sb.append(' ').append(role).append(':').append(getArgId(role)));
     return sb.toString();
   }
 

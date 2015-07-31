@@ -131,9 +131,9 @@ public class BratEvent extends BratBaseRelation {
   public String toString() {
     StringBuilder sb = new StringBuilder(super.toString());
     sb.append(':').append(getTriggerId());
-    for (String role : getArguments().keySet()) {
-      sb.append(' ').append(role).append(':').append(getArgId(role));
-    }
+    getArguments().keySet().stream()
+        .sorted()
+        .forEach(role -> sb.append(' ').append(role).append(':').append(getArgId(role)));
     return sb.toString();
   }
 }
