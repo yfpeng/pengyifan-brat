@@ -2,13 +2,10 @@ package com.pengyifan.brat;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -18,10 +15,10 @@ public class BratDocument {
 
   private String text;
   private String id;
-  private Map<String, BratAnnotation> annotationMap;
+  private List<BratAnnotation> annotations;
 
   public BratDocument() {
-    annotationMap = Maps.newHashMap();
+    annotations = Lists.newLinkedList();
   }
 
   public BratDocument(BratDocument doc) {
@@ -48,12 +45,19 @@ public class BratDocument {
 
 
   public boolean containsId(String id) {
-    return annotationMap.containsKey(id);
+    return get(id).isPresent();
+  }
+
+  private Optional<BratAnnotation> get(String id) {
+    return annotations.stream()
+        .filter(a -> a.getId().equals(id))
+        .findAny();
   }
 
   public BratAnnotation getAnnotation(String id) {
-    checkArgument(annotationMap.containsKey(id), "dont contain %s", id);
-    return annotationMap.get(id);
+    Optional<BratAnnotation> opt = get(id);
+    checkArgument(opt.isPresent(), "Don't contain %s", id);
+    return opt.get();
   }
 
   public BratEntity getEntity(String id) {
@@ -75,47 +79,44 @@ public class BratDocument {
   }
 
   public void addAnnotation(BratAnnotation ann) {
-    checkArgument(
-        !annotationMap.containsKey(ann.getId()),
-        "already have %s",
-        ann.getId());
-    annotationMap.put(ann.getId(), ann);
+    checkArgument(!containsId(ann.getId()), "already have %s", ann.getId());
+    annotations.add(ann);
   }
 
-  public Collection<BratAnnotation> getAnnotations() {
-    return annotationMap.values();
+  public List<BratAnnotation> getAnnotations() {
+    return annotations;
   }
 
-  public Collection<BratEvent> getEvents() {
+  public List<BratEvent> getEvents() {
     return getAnnotations().stream().filter(ann -> ann instanceof BratEvent)
-        .map(ann -> (BratEvent) ann).collect(Collectors.toSet());
+        .map(ann -> (BratEvent) ann).collect(Collectors.toList());
   }
 
-  public Collection<BratEntity> getEntities() {
+  public List<BratEntity> getEntities() {
     return getAnnotations().stream().filter(ann -> ann instanceof BratEntity)
-        .map(ann -> (BratEntity) ann).collect(Collectors.toSet());
+        .map(ann -> (BratEntity) ann).collect(Collectors.toList());
   }
 
-  public Collection<BratRelation> getRelations() {
+  public List<BratRelation> getRelations() {
     return getAnnotations().stream().filter(ann -> ann instanceof BratRelation)
-        .map(ann -> (BratRelation) ann).collect(Collectors.toSet());
+        .map(ann -> (BratRelation) ann).collect(Collectors.toList());
   }
 
-  public Collection<BratAttribute> getAttributes() {
+  public List<BratAttribute> getAttributes() {
     return getAnnotations().stream()
         .filter(ann -> ann instanceof BratAttribute)
-        .map(ann -> (BratAttribute) ann).collect(Collectors.toSet());
+        .map(ann -> (BratAttribute) ann).collect(Collectors.toList());
   }
 
-  public Collection<BratEquivRelation> getEquivRelations() {
+  public List<BratEquivRelation> getEquivRelations() {
     return getAnnotations().stream()
         .filter(ann -> ann instanceof BratEquivRelation)
-        .map(ann -> (BratEquivRelation) ann).collect(Collectors.toSet());
+        .map(ann -> (BratEquivRelation) ann).collect(Collectors.toList());
   }
 
-  public Collection<BratNote> getNotes() {
+  public List<BratNote> getNotes() {
     return getAnnotations().stream().filter(ann -> ann instanceof BratNote)
-        .map(ann -> (BratNote) ann).collect(Collectors.toSet());
+        .map(ann -> (BratNote) ann).collect(Collectors.toList());
   }
 
   /**
@@ -124,23 +125,15 @@ public class BratDocument {
    * @return list of BratNote
    */
   public List<BratNote> getNotes(String refId) {
-    List<BratNote> notes = new ArrayList<BratNote>();
-    for (BratNote note : getNotes()) {
-      if (note.getRefId().equals(refId)) {
-        notes.add(note);
-      }
-    }
-    return notes;
+    return getNotes().stream()
+        .filter(n -> n.getRefId().equals(refId))
+        .collect(Collectors.toList());
   }
 
   public List<BratAttribute> getAttributes(String refId) {
-    List<BratAttribute> attributes = new ArrayList<BratAttribute>();
-    for (BratAttribute attribute : getAttributes()) {
-      if (attribute.getRefId().equals(refId)) {
-        attributes.add(attribute);
-      }
-    }
-    return attributes;
+    return getAttributes().stream()
+        .filter(a -> a.getRefId().equals(refId))
+        .collect(Collectors.toList());
   }
 
   public void setDocId(String id) {
@@ -168,7 +161,7 @@ public class BratDocument {
     return Objects.hash(
         id,
         text,
-        annotationMap);
+        annotations);
   }
 
   @Override
@@ -182,7 +175,7 @@ public class BratDocument {
     BratDocument rhs = (BratDocument) o;
     return Objects.equals(id, rhs.id)
         && Objects.equals(text, rhs.text)
-        && Objects.equals(annotationMap, rhs.annotationMap);
+        && Objects.equals(annotations, rhs.annotations);
   }
 
   public BratDocument reorderEntityByOffset() {
