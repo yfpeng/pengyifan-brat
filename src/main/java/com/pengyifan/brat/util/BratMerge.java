@@ -62,8 +62,7 @@ public class BratMerge {
 
   // map: old --> new
   private BratEquivRelation find(BratEquivRelation oldRel, BratDocument oldDoc) {
-    BratEquivRelationEquator relEquator = new BratEquivRelationEquator(oldDoc,
-        newDoc);
+    BratEquivRelationEquator relEquator = new BratEquivRelationEquator(oldDoc, newDoc);
     for (BratEquivRelation newRel : newDoc.getEquivRelations()) {
       if (relEquator.equate(oldRel, newRel)) {
         return newRel;
@@ -296,17 +295,18 @@ public class BratMerge {
       // type
       if (!r1.getType().equals(r2.getType())) {
         return false;
-      } else if (!contains(r1, r2)) {
+      } else if (!contains(r1, r2, doc1, doc2)) {
         return false;
       } else {
-        return contains(r2, r1);
+        return contains(r2, r1, doc2, doc1);
       }
     }
 
     /**
      * for every role:arg in r1, r2 contains role:arg
      */
-    private boolean contains(BratEquivRelation r1, BratEquivRelation r2) {
+    private boolean contains(BratEquivRelation r1, BratEquivRelation r2,
+        BratDocument doc1, BratDocument doc2) {
       for (String argId1 : r1.getArgIds()) {
         checkArgument(
             argId1.length() > 0 && argId1.charAt(0) == 'T',
