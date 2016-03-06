@@ -52,12 +52,12 @@ public class BratEquivRelation extends BratAnnotation {
     checkBratFormatArgument(toks.length == 2, "Illegal format: %s", s);
 
     BratEquivRelation relation = new BratEquivRelation();
-    relation.setId(toks[0]);
+    checkBratFormatArgument(toks[0].equals("*"), "Illegal format: %s", s);
 
     toks = toks[1].split(" ");
     checkBratFormatArgument(toks.length >= 2, "Illegal format: %s", s);
+    checkBratFormatArgument(toks[0].equals("Equiv"), "Illegal format: %s", s);
 
-    relation.setType(toks[0]);
     for (int i = 1; i < toks.length; i++) {
       relation.addArgId(toks[i]);
     }
@@ -68,8 +68,8 @@ public class BratEquivRelation extends BratAnnotation {
 
   public BratEquivRelation() {
     super();
-    setId("*");
-    setType("Equiv");
+    super.setId("*");
+    super.setType("Equiv");
     argIds = Sets.newTreeSet();
   }
 
@@ -79,7 +79,8 @@ public class BratEquivRelation extends BratAnnotation {
   }
 
   public void addArgId(String argId) {
-    checkArgument(argIds.contains(argId), "Duplicated arg: %s", argId);
+    checkArgument(!argIds.contains(argId), "Duplicated arg: %s", argId);
+    argIds.add(argId);
   }
 
   public boolean containsArgId(String argId) {

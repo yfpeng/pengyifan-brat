@@ -1,13 +1,22 @@
 package com.pengyifan.brat;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,8 +24,6 @@ import com.google.common.testing.EqualsTester;
 import com.pengyifan.brat.io.BratIOUtils;
 
 public class BratDocumentTest {
-
-  private static final String ANN_FILE = "example1.ann";
   
   private static final String TEXT = "ABC";
   private static final String DOC_ID = "id";
@@ -28,21 +35,20 @@ public class BratDocumentTest {
 
   @Before
   public void setUp()
-      throws FileNotFoundException, IOException {
-    URL url = this.getClass().getResource("/" + ANN_FILE);
-    File expected = new File(url.getFile());
-    base = BratIOUtils.read(new FileReader(expected), DOC_ID);
+      throws IOException, URISyntaxException {
+    URL url = this.getClass().getResource("/example1.ann");
+    base = BratIOUtils.read(Files.newBufferedReader(Paths.get(url.toURI())), DOC_ID);
     base.setText(TEXT);
   }
   
   @Test
-  public void test_allFields() {
+  public void testAllFields() {
     assertEquals(DOC_ID, base.getDocId());
     assertEquals(TEXT, base.getText());
   }
 
   @Test
-  public void test_equals() {
+  public void testEquals() {
     BratDocument baseCopy = new BratDocument(base);
 
     BratDocument diffId = new BratDocument(base);
@@ -59,8 +65,35 @@ public class BratDocumentTest {
   }
 
   @Test
-  public void test_getAnnotation() {
-    BratAnnotation ann = base.getAnnotation("T1");
-    assertEquals("T1", ann.getId());
+  public void testGetEntity() {
+    BratEntity entity = base.getEntity("T2");
+    assertEquals("Protein", entity.getType());
+    assertEquals(161, entity.beginPosition());
+    assertEquals(164, entity.endPosition());
+    assertEquals("Id1", entity.getText());
+  }
+
+  @Test
+  public void testGetRelation() {
+    BratRelation relation = base.getRelation("R1");
+    assertEquals("PPI", relation.getType());
+    assertEquals("T1", relation.getArgId("Arg1"));
+    assertEquals("T2", relation.getArgId("Arg2"));
+  }
+
+  @Test
+  public void testGetEvent() {
+    BratEvent event = base.getEvent("E1");
+    assertEquals("Positive_regulation", event.getType());
+    assertEquals("T7", event.getTriggerId());
+    assertEquals("E2", event.getArgId("Theme"));
+  }
+
+  @Test
+  public void testGetEquivRelations() {
+    BratEquivRelation relation = Iterables.getOnlyElement(base.getEquivRelations());
+    assertEquals("*", relation.getId());
+    assertEquals("Equiv", relation.getType());
+    assertThat(relation.getArgIds(), is(Sets.newHashSet("T1", "T2")));
   }
 }
