@@ -31,7 +31,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * Represented in standoff as
  * 
  * <pre>
- * *\tTYPE ID1 ID2 [...]
+ * * \t TYPE ID1 ID2 [...]
  * </pre>
  * 
  * Where "*" is the literal asterisk character.
@@ -121,9 +121,8 @@ public class BratEquivRelation extends BratAnnotation {
 
   /**
    * <pre>
-   *   * \t TYPE ID1 ID2 [...]
+   * * \t TYPE ID1 ID2 [...]
    * </pre>
-   * @return
    */
   @Override
   public String toBratString() {

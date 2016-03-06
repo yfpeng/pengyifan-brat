@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.Equator;
-import org.apache.commons.lang3.Validate;
 
 import com.pengyifan.brat.BratBaseRelation;
 import com.pengyifan.brat.BratDocument;
@@ -110,14 +109,12 @@ public class BratMerge {
         newEvent.setId("E" + newDoc.getEvents().size());
         newEvent.setType(oldEvent.getType());
 
-        Validate.isTrue(
-            idMap.containsKey(oldEvent.getTriggerId()),
+        checkArgument(idMap.containsKey(oldEvent.getTriggerId()),
             "dont contain: " + oldEvent.getTriggerId());
         newEvent.setTriggerId(idMap.get(oldEvent.getTriggerId()));
         for (String role : oldEvent.getArguments().keySet()) {
           String argId = oldEvent.getArgId(role);
-          checkArgument(
-              argId.length() > 0 && argId.charAt(0) == 'T',
+          checkArgument(argId.length() > 0 && argId.charAt(0) == 'T',
               "Does not support recursive matching: %d",
               oldEvent);
           checkArgument(idMap.containsKey(argId), "dont contain: %s", argId);
@@ -191,8 +188,7 @@ public class BratMerge {
         newNote.setId("#" + newDoc.getNotes().size());
         newNote.setType(oldNote.getType());
 
-        Validate.isTrue(idMap.containsKey(oldNote.getRefId()), "dont contain: "
-            + oldNote.getRefId());
+        checkArgument(idMap.containsKey(oldNote.getRefId()), "dont contain: " + oldNote.getRefId());
         newNote.setRefId(idMap.get(oldNote.getRefId()));
 
         newNote.setText(oldNote.getText());
