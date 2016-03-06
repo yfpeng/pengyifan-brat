@@ -14,7 +14,7 @@ import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
  * arguments.
  * <p>
  * <pre>
- *   R1 Origin Arg1:T3 Arg2:T4
+ * R1 Origin Arg1:T3 Arg2:T4
  * </pre>
  * <p>
  * The format is similar to that applied for events, with the exception that
@@ -29,7 +29,7 @@ import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
  * Represented in standoff as
  * <p>
  * <pre>
- *   ID \t TYPE [ROLE1:PART1 ROLE2:PART2 ...]
+ * ID \t TYPE [ROLE1:PART1 ROLE2:PART2 ...]
  * </pre>
  *
  * @author "Yifan Peng"
@@ -78,10 +78,8 @@ public class BratRelation extends BratBaseRelation {
 
   /**
    * <pre>
-   *  ID \t TYPE [ROLE1:PART1 ROLE2:PART2 ...]
+   * ID \t TYPE [ROLE1:PART1 ROLE2:PART2 ...]
    * </pre>
-   *
-   * @return
    */
   @Override
   public String toBratString() {
@@ -90,7 +88,7 @@ public class BratRelation extends BratBaseRelation {
     sb.append('\t').append(getType());
     // args
     for (Entry<String, String> entry : getArguments().entrySet()) {
-      sb.append(' ').append(entry.getKey()).append(':').append(getArgId(entry.getValue()));
+      sb.append(' ').append(entry.getKey()).append(':').append(entry.getValue());
     }
     return sb.toString();
   }

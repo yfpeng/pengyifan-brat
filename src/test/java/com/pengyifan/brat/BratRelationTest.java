@@ -12,17 +12,18 @@ import com.google.common.testing.EqualsTester;
 
 public class BratRelationTest {
 
-  private static final String ARG = "ARG";
-  private static final String THEME = "THEME";
+  private static final String LINE = "R1\tOrigin Arg1:T3 Arg2:T4";
 
   private static final String ID = "R1";
-  private static final String TYPE = "TYPE";
-  private static final String ARG_ID = "TRIGGER";
-  private static final String THEME_ID = "TEHME";
+  private static final String TYPE = "Origin";
+  private static final String ROLE1 = "Arg1";
+  private static final String ROLE1_ID = "T3";
+  private static final String ROLE2 = "Arg2";
+  private static final String ROLE2_ID = "T4";
 
   private static final String ID_2 = "R2";
   private static final String TYPE_2 = "TYPE2";
-  private static final String THEME_ID_2 = "TEHME2";
+  private static final String ROLE2_ID_2 = "T5";
 
   private BratRelation base;
 
@@ -34,12 +35,12 @@ public class BratRelationTest {
     base = new BratRelation();
     base.setId(ID);
     base.setType(TYPE);
-    base.putArgument(ARG, ARG_ID);
-    base.putArgument(THEME, THEME_ID);
+    base.putArgument(ROLE1, ROLE1_ID);
+    base.putArgument(ROLE2, ROLE2_ID);
   }
 
   @Test
-  public void test_equals() {
+  public void testEquals() {
     BratRelation baseCopy = new BratRelation(base);
 
     BratRelation diffId = new BratRelation(base);
@@ -49,7 +50,7 @@ public class BratRelationTest {
     diffType.setType(TYPE_2);
 
     BratRelation diffArg = new BratRelation(base);
-    diffArg.putArgument(THEME, THEME_ID_2);
+    diffArg.putArgument(ROLE2_ID, ROLE2_ID_2);
 
     new EqualsTester()
         .addEqualityGroup(base, baseCopy)
@@ -60,22 +61,20 @@ public class BratRelationTest {
   }
 
   @Test
-  public void test_allFields() {
+  public void testAllFields() {
     assertEquals(ID, base.getId());
     assertEquals(TYPE, base.getType());
-    assertTrue(base.containsRole(ARG));
-    assertEquals(ARG_ID, base.getArgId(ARG));
-    assertEquals(THEME_ID, base.getArgId(THEME));
+    assertEquals(ROLE1_ID, base.getArgId(ROLE1));
+    assertEquals(ROLE2_ID, base.getArgId(ROLE2));
   }
 
   @Test
-  public void testParse() {
-    BratRelation entity = BratRelation
-        .parseRelation("R1\tPositive_regulation Arg1:E1 Theme:E2");
-    assertEquals("R1", entity.getId());
-    assertEquals("Positive_regulation", entity.getType());
-    assertEquals("E1", entity.getArgId("Arg1"));
-    assertEquals("E2", entity.getArgId("Theme"));
+  public void testParseRelation() {
+    BratRelation entity = BratRelation.parseRelation(LINE);
+    assertEquals(ID, entity.getId());
+    assertEquals(TYPE, entity.getType());
+    assertEquals(ROLE1_ID, entity.getArgId(ROLE1));
+    assertEquals(ROLE2_ID, entity.getArgId(ROLE2));
   }
 
   @Test
@@ -85,5 +84,10 @@ public class BratRelationTest {
 
     thrown.expect(IllegalArgumentException.class);
     base.setId("T21");
+  }
+
+  @Test
+  public void testToBratString() throws Exception {
+    assertEquals(LINE, base.toBratString());
   }
 }

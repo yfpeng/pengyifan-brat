@@ -39,7 +39,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * Represented in standoff as
  * 
  * <pre>
- *   ID \t TYPE REFID [FLAG1 FLAG2 ...]
+ * ID \t TYPE REFID [FLAG1 FLAG2 ...]
  * </pre>
  * 
  * @since 1.0.0
@@ -140,7 +140,7 @@ public class BratAttribute extends BratAnnotation {
 
   /**
    * <pre>
-   *   ID \t TYPE REFID [FLAG1 FLAG2 ...]
+   * ID \t TYPE REFID [FLAG1 FLAG2 ...]
    * </pre>
    * @return
    */

@@ -1,5 +1,6 @@
 package com.pengyifan.brat;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -29,7 +30,7 @@ import java.util.Objects;
  * Represented in standoff as
  * 
  * <pre>
- * ID\tTYPE REFID\tNOTE
+ * #ID \t TYPE REFID \t NOTE
  * </pre>
  * 
  * @since 1.0.0
@@ -113,9 +114,7 @@ public class BratNote extends BratAnnotation {
   @Override
   public void setId(String id) {
     checkNotNull(id, "ID should not be null");
-    checkArgument(
-        id.length() > 0 && id.charAt(0) == '#',
-        "ID should start with #");
+    checkArgument(id.length() > 1 && id.charAt(0) == '#', "ID should start with #");
     super.setId(id);
   }
 
@@ -139,9 +138,8 @@ public class BratNote extends BratAnnotation {
 
   /**
    * <pre>
-   *   ID \t TYPE REFID \t NOTE
+   * #ID \t TYPE REFID \t NOTE
    * </pre>
-   * @return
    */
   @Override
   public String toBratString() {

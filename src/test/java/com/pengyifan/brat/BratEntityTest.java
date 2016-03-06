@@ -14,13 +14,15 @@ import com.google.common.testing.EqualsTester;
 
 public class BratEntityTest {
 
+  private static final String LINE = "T1\tOrganization 48 53;56 57\tSony";
+
   private static final String ID = "T1";
-  private static final String TYPE = "TYPE";
-  private static final String TEXT = "ABC";
+  private static final String TYPE = "Organization";
+  private static final String TEXT = "Sony";
 
   private static final String ID_2 = "T2";
-  private static final String TYPE_2 = "TYPE2";
-  private static final String TEXT_2 = "DEF";
+  private static final String TYPE_2 = "Organization2";
+  private static final String TEXT_2 = "Sony2";
 
   private static final Range<Integer> SPAN_1 = Range.closedOpen(48, 53);
   private static final Range<Integer> SPAN_2 = Range.closedOpen(56, 57);
@@ -42,7 +44,7 @@ public class BratEntityTest {
   }
 
   @Test
-  public void test_equals() {
+  public void testEquals() {
     BratEntity baseCopy = new BratEntity(base);
 
     BratEntity diffId = new BratEntity(base);
@@ -67,7 +69,7 @@ public class BratEntityTest {
   }
 
   @Test
-  public void test_allFields() {
+  public void testAllFields() {
     assertEquals(ID, base.getId());
     assertEquals(TEXT, base.getText());
     assertEquals(TYPE, base.getType());
@@ -83,12 +85,12 @@ public class BratEntityTest {
 
   @Test
   public void testParseEntity() {
-    BratEntity entity = BratEntity.parseEntity("T1\tProtein 48 53\tBMP-6");
-    assertEquals("T1", entity.getId());
-    assertEquals("Protein", entity.getType());
-    assertEquals("BMP-6", entity.getText());
-    assertEquals(48, entity.beginPosition());
-    assertEquals(53, entity.endPosition());
+    BratEntity entity = BratEntity.parseEntity(LINE);
+    assertEquals(ID, entity.getId());
+    assertEquals(TYPE, entity.getType());
+    assertEquals(TEXT, entity.getText());
+    assertEquals(SPAN_1.lowerEndpoint().intValue(), entity.beginPosition());
+    assertEquals(SPAN_2.upperEndpoint().intValue(), entity.endPosition());
   }
 
   @Test
@@ -113,13 +115,14 @@ public class BratEntityTest {
 
   @Test
   public void testShift() {
-    Range<Integer> range = base.totalSpan();
-    assertEquals(48, range.lowerEndpoint().intValue());
-    assertEquals(57, range.upperEndpoint().intValue());
-
     BratEntity entity = BratEntity.shift(base, 2);
-    range = entity.totalSpan();
+    Range<Integer> range = entity.totalSpan();
     assertEquals(50, range.lowerEndpoint().intValue());
     assertEquals(59, range.upperEndpoint().intValue());
+  }
+
+  @Test
+  public void testToBratString() {
+    assertEquals(LINE, base.toBratString());
   }
 }

@@ -41,7 +41,7 @@ import java.util.Objects;
  * Represented in standoff as
  * 
  * <pre>
- *   ID \t TYPE:TRIGGER [ROLE1:PART1 ROLE2:PART2 ...]
+ * ID \t TYPE:TRIGGER [ROLE1:PART1 ROLE2:PART2 ...]
  * </pre>
  * 
  * @since 1.0.0
@@ -128,7 +128,7 @@ public class BratEvent extends BratBaseRelation {
 
   /**
    * <pre>
-   *  ID \t TYPE:TRIGGER [ROLE1:PART1 ROLE2:PART2 ...]
+   * ID \t TYPE:TRIGGER [ROLE1:PART1 ROLE2:PART2 ...]
    * </pre>
    * @return
    */

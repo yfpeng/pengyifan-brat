@@ -11,17 +11,20 @@ import com.google.common.testing.EqualsTester;
 
 public class BratEventTest {
 
-  private static final String THEME = "THEME";
+  private static final String LINE = "E1\tMERGE-ORG:T2 Org1:T1 Org2:T3";
 
   private static final String ID = "E1";
-  private static final String TYPE = "TYPE";
-  private static final String TRIGGER = "TRIGGER";
-  private static final String THEME_ID = "TEHME";
+  private static final String TYPE = "MERGE-ORG";
+  private static final String TRIGGER_ID = "T2";
+  private static final String ROLE1 = "Org1";
+  private static final String ROLE1_ID = "T1";
+  private static final String ROLE2 = "Org2";
+  private static final String ROLE2_ID = "T3";
 
   private static final String ID_2 = "E2";
-  private static final String TYPE_2 = "TYPE2";
-  private static final String TRIGGER_2 = "TRIGGER2";
-  private static final String THEME_ID_2 = "TEHME2";
+  private static final String TYPE_2 = "MERGE-ORG2";
+  private static final String TRIGGER_ID_2 = "T4";
+  private static final String ROLE1_ID_2 = "T5";
 
   private BratEvent base;
 
@@ -33,12 +36,13 @@ public class BratEventTest {
     base = new BratEvent();
     base.setId(ID);
     base.setType(TYPE);
-    base.setTriggerId(TRIGGER);
-    base.putArgument(THEME, THEME_ID);
+    base.setTriggerId(TRIGGER_ID);
+    base.putArgument(ROLE1, ROLE1_ID);
+    base.putArgument(ROLE2, ROLE2_ID);
   }
 
   @Test
-  public void test_equals() {
+  public void testEquals() {
     BratEvent baseCopy = new BratEvent(base);
 
     BratEvent diffId = new BratEvent(base);
@@ -48,10 +52,10 @@ public class BratEventTest {
     diffType.setType(TYPE_2);
 
     BratEvent diffTrigger = new BratEvent(base);
-    diffTrigger.setTriggerId(TRIGGER_2);
+    diffTrigger.setTriggerId(TRIGGER_ID_2);
 
     BratEvent diffTheme = new BratEvent(base);
-    diffTheme.putArgument(THEME, THEME_ID_2);
+    diffTheme.putArgument(ROLE1, ROLE1_ID_2);
 
     new EqualsTester()
         .addEqualityGroup(base, baseCopy)
@@ -63,22 +67,24 @@ public class BratEventTest {
   }
 
   @Test
-  public void test_allFields() {
+  public void testAllFields() {
     assertEquals(ID, base.getId());
     assertEquals(TYPE, base.getType());
-    assertEquals(TRIGGER, base.getTriggerId());
-    assertEquals(THEME_ID, base.getArgId(THEME));
+    assertEquals(TRIGGER_ID, base.getTriggerId());
+    assertEquals(ROLE1_ID, base.getArgId(ROLE1));
+    assertEquals(ROLE2_ID, base.getArgId(ROLE2));
   }
 
   @Test
-  public void testParse() {
-    BratEvent entity = BratEvent.parseEvent("E1\tPositive_regulation:T7 Theme:E2");
-    assertEquals("E1", entity.getId());
-    assertEquals("Positive_regulation", entity.getType());
-    assertEquals("T7", entity.getTriggerId());
-    assertEquals("E2", entity.getArgId("Theme"));
+  public void testParseEvent() {
+    BratEvent entity = BratEvent.parseEvent(LINE);
+    assertEquals(ID, entity.getId());
+    assertEquals(TYPE, entity.getType());
+    assertEquals(TRIGGER_ID, entity.getTriggerId());
+    assertEquals(ROLE1_ID, base.getArgId(ROLE1));
+    assertEquals(ROLE2_ID, base.getArgId(ROLE2));
 
-    thrown.expect(BratFormatException.class);
+    thrown.expect(BratIllegalFormatException.class);
     BratEvent.parseEvent("");
   }
 
@@ -91,4 +97,8 @@ public class BratEventTest {
     base.setId("T21");
   }
 
+  @Test
+  public void testToBratString() throws Exception {
+    assertEquals(LINE, base.toBratString());
+  }
 }

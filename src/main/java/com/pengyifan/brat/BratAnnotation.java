@@ -93,6 +93,11 @@ public abstract class BratAnnotation {
     this.type = type;
   }
 
+  /**
+   * Returns the string in the brat standoff format.
+   *
+   * @return the string in the brat standoff format
+   */
   public abstract String toBratString();
   
   @Override
