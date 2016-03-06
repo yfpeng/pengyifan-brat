@@ -8,6 +8,13 @@ import java.nio.file.Path;
 
 import com.pengyifan.brat.BratDocument;
 
+/**
+ * Provides static utility methods for reading and writing with {@link
+ * com.pengyifan.brat.BratDocument} instances.
+ *
+ * @author "Yifan Peng"
+ * @since 1.0.0
+ */
 public class BratIOUtils {
 
   private BratIOUtils() {
@@ -50,7 +57,7 @@ public class BratIOUtils {
    */
   public static BratDocument read(Reader reader, String docId)
       throws IOException {
-    BratAnnotationsReader r = new BratAnnotationsReader(reader, docId);
+    BratDocumentReader r = new BratDocumentReader(reader, docId);
     BratDocument doc = r.read();
     r.close();
     return doc;
@@ -65,7 +72,7 @@ public class BratIOUtils {
    */
   public static void write(Writer writer, BratDocument doc)
       throws IOException {
-    BratAnnotationsWriter w = new BratAnnotationsWriter(writer);
+    BratDocumentWriter w = new BratDocumentWriter(writer);
     w.write(doc);
     w.close();
   }

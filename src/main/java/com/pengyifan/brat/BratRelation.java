@@ -14,7 +14,7 @@ import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
  * arguments.
  * <p>
  * <pre>
- * R1 Origin Arg1:T3 Arg2:T4
+ *   R1 Origin Arg1:T3 Arg2:T4
  * </pre>
  * <p>
  * The format is similar to that applied for events, with the exception that
@@ -29,7 +29,7 @@ import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
  * Represented in standoff as
  * <p>
  * <pre>
- * ID\tTYPE [ROLE1:PART1 ROLE2:PART2 ...]
+ *   ID \t TYPE [ROLE1:PART1 ROLE2:PART2 ...]
  * </pre>
  *
  * @author "Yifan Peng"

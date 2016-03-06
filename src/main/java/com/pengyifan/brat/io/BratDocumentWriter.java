@@ -9,27 +9,39 @@ import java.util.Collection;
 import com.pengyifan.brat.BratAnnotation;
 import com.pengyifan.brat.BratDocument;
 
-public class BratAnnotationsWriter implements Closeable {
+/**
+ * Writes the brat document to an output stream.
+ *
+ * @author "Yifan Peng"
+ * @since 1.0.0
+ */
+public class BratDocumentWriter implements Closeable {
 
   private BufferedWriter writer;
 
-  public BratAnnotationsWriter(Writer writer) {
+  /**
+   * Creates a brat document writer.
+   *
+   * @param writer a writer
+   */
+  public BratDocumentWriter(Writer writer) {
     this.writer = new BufferedWriter(writer);
   }
 
-  public void write(BratAnnotation annotation)
-      throws IOException {
-    writer.write(annotation.toBratString());
-    writer.newLine();
-  }
-
-  public <E extends BratAnnotation> void write(Collection<E> annotations)
+  private <E extends BratAnnotation> void write(Collection<E> annotations)
       throws IOException {
     for (BratAnnotation annotation : annotations) {
-      write(annotation);
+      writer.write(annotation.toBratString());
+      writer.newLine();
     }
   }
 
+  /**
+   * Writes the brat document.
+   *
+   * @param doc the brat document
+   * @throws IOException If an I/O error occurs
+   */
   public void write(BratDocument doc)
       throws IOException {
     write(doc.getEntities());

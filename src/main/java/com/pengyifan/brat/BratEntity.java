@@ -32,7 +32,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * Represented in standoff as
  * 
  * <pre>
- * ID\tTYPE START END\tTEXT
+ *   ID \t TYPE START END \t TEXT
  * </pre>
  * 
  * Where START and END are positive integer offsets identifying the span of the
@@ -40,7 +40,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * annotations can be represented as
  * 
  * <pre>
- * ID\tTYPE START1 END1;START2 END2;...
+ *   ID \t TYPE START END[;START END]* \t TEXT
  * </pre>
  * 
  * with multiple START END pairs separated by semicolons.
@@ -205,7 +205,7 @@ public class BratEntity extends BratAnnotation {
 
   /**
    * <pre>
-   *   ID \t TYPE START END[;START END] \t TEXT
+   *   ID \t TYPE START END[;START END]* \t TEXT
    * </pre>
    * @return
    */
