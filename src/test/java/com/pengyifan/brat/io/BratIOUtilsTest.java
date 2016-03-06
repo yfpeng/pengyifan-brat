@@ -63,7 +63,7 @@ public class BratIOUtilsTest {
   public void testWritePath()
       throws IOException {
     Path file = temporaryFolder.newFile("output.txt").toPath();
-    BratIOUtils.write(Files.newBufferedWriter(file), base);
+    BratIOUtils.write(file, base);
     BratDocument actual = BratIOUtils.read(Files.newBufferedReader(file), DOC_ID);
     assertDoc(actual);
   }
