@@ -19,7 +19,7 @@ public class BratAnnotationsWriter implements Closeable {
 
   public void write(BratAnnotation annotation)
       throws IOException {
-    writer.write(annotation.toString());
+    writer.write(annotation.toBratString());
     writer.newLine();
   }
 

@@ -10,7 +10,10 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Each entity annotation has a unique ID and is defined by type (e.g. Person
@@ -89,7 +92,7 @@ public class BratEntity extends BratAnnotation {
   }
   
   /**
-   * Create a new entity and shifts the location by "offset
+   * Create a new entity and shifts the location by offset
    * @param ent old entity
    * @param offset shifted offset
    * @return new entity
@@ -108,8 +111,7 @@ public class BratEntity extends BratAnnotation {
   /**
    * Adds one span of the annotation.
    * 
-   * @param start the index of the first character of the annotated span in the
-   *          text
+   * @param start the index of the first character of the annotated span in the text
    * @param end the index of the first character after the annotated span
    */
   public void addSpan(int start, int end) {
@@ -123,11 +125,9 @@ public class BratEntity extends BratAnnotation {
    */
   public void addSpan(Range<Integer> span) {
     checkArgument(!span.isEmpty(), "the span is empty: %s", span);
-    checkArgument(
-        span.lowerBoundType() == BoundType.CLOSED,
+    checkArgument(span.lowerBoundType() == BoundType.CLOSED,
         "start-offset has to be closed: %s", span);
-    checkArgument(
-        span.upperBoundType() == BoundType.OPEN,
+    checkArgument(span.upperBoundType() == BoundType.OPEN,
         "end-offset has to be closed: %s", span);
     addSpan(span.lowerEndpoint(), span.upperEndpoint());
   }
@@ -190,9 +190,7 @@ public class BratEntity extends BratAnnotation {
   @Override
   public void setId(String id) {
     checkNotNull(id, "ID should not be null");
-    checkArgument(
-        id.length() > 0 && id.charAt(0) == 'T',
-        "ID should start with T");
+    checkArgument(id.length() > 0 && id.charAt(0) == 'T', "ID should start with T");
     super.setId(id);
   }
 
@@ -205,9 +203,17 @@ public class BratEntity extends BratAnnotation {
     this.text = text;
   }
 
+  /**
+   * <pre>
+   *   ID \t TYPE START END[;START END] \t TEXT
+   * </pre>
+   * @return
+   */
   @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder(super.toString());
+  public String toBratString() {
+    StringBuilder sb = new StringBuilder(getId());
+    // type
+    sb.append('\t').append(getType());
     // span
     StringJoiner joiner = new StringJoiner(";");
     for (Range<Integer> range : getSpans().asRanges()) {
@@ -217,6 +223,16 @@ public class BratEntity extends BratAnnotation {
     // text
     sb.append('\t').append(getText());
     return sb.toString();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        .append("id", getId())
+        .append("type", getType())
+        .append("spans", getSpans())
+        .append("text", getText())
+        .toString();
   }
 
   /**

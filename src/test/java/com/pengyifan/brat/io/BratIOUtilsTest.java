@@ -20,12 +20,12 @@ public class BratIOUtilsTest {
   public void test_success()
       throws IOException {
     URL url = this.getClass().getResource("/" + ANN_FILE);
-    BratDocument exptected = BratIOUtils.read(new FileReader(url.getFile()), "x");
+    BratDocument expected = BratIOUtils.read(new FileReader(url.getFile()), "x");
 
     StringWriter writer = new StringWriter();
-    BratIOUtils.write(writer, exptected);
+    BratIOUtils.write(writer, expected);
     BratDocument actual = BratIOUtils.read(new StringReader(writer.toString()), "x");
     
-    assertEquals(exptected, actual);
+    assertEquals(expected, actual);
   }
 }

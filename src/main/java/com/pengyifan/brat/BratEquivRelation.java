@@ -6,7 +6,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Objects;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Equivalence relations are symmetric and transitive relations that define
@@ -41,8 +44,7 @@ public class BratEquivRelation extends BratAnnotation {
   /**
    * Parses the string argument as a equivalence relation annotation.
    * 
-   * @param s a String containing the equivalence relation annotation to be
-   *          parsed
+   * @param s a String containing the equivalence relation annotation to be parsed
    * @return the equivalence relation annotation represented by the argument.
    */
   public static BratEquivRelation parseEquivRelation(String s) {
@@ -66,7 +68,9 @@ public class BratEquivRelation extends BratAnnotation {
 
   public BratEquivRelation() {
     super();
-    argIds = Sets.newHashSet();
+    setId("*");
+    setType("Equiv");
+    argIds = Sets.newTreeSet();
   }
 
   public BratEquivRelation(BratEquivRelation relation) {
@@ -100,16 +104,6 @@ public class BratEquivRelation extends BratAnnotation {
   }
 
   @Override
-  public String getId() {
-    return "*";
-  }
-
-  @Override
-  public String getType() {
-    return "Equiv";
-  }
-
-  @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), argIds);
   }
@@ -124,12 +118,30 @@ public class BratEquivRelation extends BratAnnotation {
     throw new UnsupportedOperationException("Type is always Equiv");
   }
 
+  /**
+   * <pre>
+   *   * \t TYPE ID1 ID2 [...]
+   * </pre>
+   * @return
+   */
   @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder(super.toString());
-    for (String argId : argIds) {
-      sb.append(' ').append(argId);
+  public String toBratString() {
+    StringBuilder sb = new StringBuilder(getId());
+    // type
+    sb.append('\t').append(getType());
+    // args
+    for(String argid: argIds) {
+      sb.append(' ').append(argid);
     }
     return sb.toString();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        .append("id", getId())
+        .append("type", getType())
+        .append("args", getArgIds())
+        .toString();
   }
 }

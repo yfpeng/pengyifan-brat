@@ -1,5 +1,8 @@
 package com.pengyifan.brat;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -134,10 +137,31 @@ public class BratNote extends BratAnnotation {
     this.text = text;
   }
 
+  /**
+   * <pre>
+   *   ID \t TYPE REFID \t NOTE
+   * </pre>
+   * @return
+   */
+  @Override
+  public String toBratString() {
+    StringBuilder sb = new StringBuilder(getId());
+    // type
+    sb.append('\t').append(getType());
+    // refid
+    sb.append(' ').append(getRefId());
+    // note
+    sb.append('\t').append(getText());
+    return sb.toString();
+  }
+
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(super.toString());
-    sb.append(' ').append(getRefId()).append('\t').append(getText());
-    return sb.toString();
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        .append("id", getId())
+        .append("type", getType())
+        .append("refid", getRefId())
+        .append("note", getText())
+        .toString();
   }
 }

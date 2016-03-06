@@ -71,23 +71,22 @@ public class BratEventTest {
   }
 
   @Test
-  public void test_parse() {
-    BratEvent entity = BratEvent
-        .parseEvent("E1\tPositive_regulation:T7 Theme:E2");
+  public void testParse() {
+    BratEvent entity = BratEvent.parseEvent("E1\tPositive_regulation:T7 Theme:E2");
     assertEquals("E1", entity.getId());
     assertEquals("Positive_regulation", entity.getType());
     assertEquals("T7", entity.getTriggerId());
     assertEquals("E2", entity.getArgId("Theme"));
+
+    thrown.expect(BratFormatException.class);
+    BratEvent.parseEvent("");
   }
 
   @Test
-  public void test_setId() {
+  public void testSetId() {
     thrown.expect(NullPointerException.class);
     base.setId(null);
-  }
 
-  @Test
-  public void test_setId2() {
     thrown.expect(IllegalArgumentException.class);
     base.setId("T21");
   }

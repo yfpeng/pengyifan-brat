@@ -2,6 +2,7 @@ package com.pengyifan.brat;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.SortedMap;
 
 import com.google.common.collect.Maps;
 
@@ -16,16 +17,16 @@ public abstract class BratBaseRelation extends BratAnnotation {
   /**
    * ROLE:ID
    */
-  private Map<String, String> arguments;
+  private SortedMap<String, String> arguments;
 
   public BratBaseRelation() {
     super();
-    arguments = Maps.newHashMap();
+    arguments = Maps.newTreeMap();
   }
 
   public BratBaseRelation(BratBaseRelation relation) {
     super(relation);
-    arguments = Maps.newHashMap(relation.arguments);
+    arguments = Maps.newTreeMap(relation.arguments);
   }
 
   /**

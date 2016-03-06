@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Attribute annotations are binary or multi-valued "flags" that specify
@@ -132,10 +134,28 @@ public class BratAttribute extends BratAnnotation {
   @Override
   public void setId(String id) {
     checkNotNull(id, "ID should not be null");
-    checkArgument(
-        id.length() > 0 && id.charAt(0) == 'A',
-        "ID should start with A");
+    checkArgument(id.length() > 0 && id.charAt(0) == 'A', "ID should start with A");
     super.setId(id);
+  }
+
+  /**
+   * <pre>
+   *   ID \t TYPE REFID [FLAG1 FLAG2 ...]
+   * </pre>
+   * @return
+   */
+  @Override
+  public String toBratString() {
+    StringBuilder sb = new StringBuilder(getId());
+    // type
+    sb.append('\t').append(getType());
+    // refid
+    sb.append(' ').append(getRefId());
+    // flags
+    for (String attribute : attributes) {
+      sb.append(' ').append(attribute);
+    }
+    return sb.toString();
   }
 
   /**
@@ -149,11 +169,11 @@ public class BratAttribute extends BratAnnotation {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(super.toString());
-    sb.append(' ').append(getRefId());
-    for (String attribute : attributes) {
-      sb.append(' ').append(attribute);
-    }
-    return sb.toString();
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        .append("id", getId())
+        .append("type", getType())
+        .append("refid", getRefId())
+        .append("flags", getAttributes())
+        .toString();
   }
 }

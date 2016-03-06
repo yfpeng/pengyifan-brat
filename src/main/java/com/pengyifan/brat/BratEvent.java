@@ -1,9 +1,13 @@
 package com.pengyifan.brat;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import static com.pengyifan.brat.BratPreconditions.checkBratFormatArgument;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map.Entry;
 import java.util.Objects;
 
 /**
@@ -69,9 +73,7 @@ public class BratEvent extends BratBaseRelation {
     for (int i = 1; i < toks.length; i++) {
       index = toks[i].indexOf(':');
       checkBratFormatArgument(index != -1, "Illegal format: %s", s);
-      event.putArgument(
-          toks[i].substring(0, index),
-          toks[i].substring(index + 1));
+      event.putArgument(toks[i].substring(0, index), toks[i].substring(index + 1));
     }
 
     return event;
@@ -102,8 +104,7 @@ public class BratEvent extends BratBaseRelation {
   }
 
   /**
-   * Returns he event triggers, annotations marking the word or words stating
-   * each event
+   * Returns he event triggers, annotations marking the word or words stating each event
    */
   public String getTriggerId() {
     return triggerId;
@@ -117,9 +118,7 @@ public class BratEvent extends BratBaseRelation {
   @Override
   public void setId(String id) {
     checkNotNull(id, "ID should not be null");
-    checkArgument(
-        id.length() > 0 && id.charAt(0) == 'E',
-        "ID should start with E");
+    checkArgument(id.length() > 0 && id.charAt(0) == 'E', "ID should start with E");
     super.setId(id);
   }
 
@@ -127,13 +126,33 @@ public class BratEvent extends BratBaseRelation {
     this.triggerId = triggerId;
   }
 
+  /**
+   * <pre>
+   *  ID \t TYPE:TRIGGER [ROLE1:PART1 ROLE2:PART2 ...]
+   * </pre>
+   * @return
+   */
+  @Override
+  public String toBratString() {
+    StringBuilder sb = new StringBuilder(getId());
+    // type
+    sb.append('\t').append(getType());
+    // trigger
+    sb.append(':').append(getTriggerId());
+    // args
+    for(Entry<String, String> entry: getArguments().entrySet()) {
+      sb.append(' ').append(entry.getKey()).append(':').append(entry.getValue());
+    }
+    return sb.toString();
+  }
+
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(super.toString());
-    sb.append(':').append(getTriggerId());
-    getArguments().keySet().stream()
-        .sorted()
-        .forEach(role -> sb.append(' ').append(role).append(':').append(getArgId(role)));
-    return sb.toString();
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        .append("id", getId())
+        .append("type", getType())
+        .append("trigger", getTriggerId())
+        .append("args", getArguments())
+        .toString();
   }
 }

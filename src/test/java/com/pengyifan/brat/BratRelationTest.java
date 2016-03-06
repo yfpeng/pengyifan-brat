@@ -69,7 +69,7 @@ public class BratRelationTest {
   }
 
   @Test
-  public void test_parse() {
+  public void testParse() {
     BratRelation entity = BratRelation
         .parseRelation("R1\tPositive_regulation Arg1:E1 Theme:E2");
     assertEquals("R1", entity.getId());
@@ -79,15 +79,11 @@ public class BratRelationTest {
   }
 
   @Test
-  public void test_setId() {
+  public void testSetId() {
     thrown.expect(NullPointerException.class);
     base.setId(null);
-  }
 
-  @Test
-  public void test_setId2() {
     thrown.expect(IllegalArgumentException.class);
     base.setId("T21");
   }
-
 }

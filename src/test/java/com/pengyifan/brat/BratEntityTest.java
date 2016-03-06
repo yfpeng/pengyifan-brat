@@ -82,7 +82,7 @@ public class BratEntityTest {
   }
 
   @Test
-  public void test_parse() {
+  public void testParseEntity() {
     BratEntity entity = BratEntity.parseEntity("T1\tProtein 48 53\tBMP-6");
     assertEquals("T1", entity.getId());
     assertEquals("Protein", entity.getType());
@@ -92,28 +92,34 @@ public class BratEntityTest {
   }
 
   @Test
-  public void test_addSpan() {
+  public void testAddSpan() {
     Range<Integer> span = Range.closed(23, 30);
     thrown.expect(IllegalArgumentException.class);
     base.addSpan(span);
-  }
-  
-  @Test
-  public void test_addSpan2() {
-    Range<Integer> span = Range.openClosed(23, 30);
+
+    span = Range.openClosed(23, 30);
     thrown.expect(IllegalArgumentException.class);
     base.addSpan(span);
   }
   
   @Test
-  public void test_setId() {
+  public void testSetId() {
     thrown.expect(NullPointerException.class);
     base.setId(null);
-  }
-  
-  @Test
-  public void test_setId2() {
+
     thrown.expect(IllegalArgumentException.class);
     base.setId("E21");
+  }
+
+  @Test
+  public void testShift() {
+    Range<Integer> range = base.totalSpan();
+    assertEquals(48, range.lowerEndpoint().intValue());
+    assertEquals(57, range.upperEndpoint().intValue());
+
+    BratEntity entity = BratEntity.shift(base, 2);
+    range = entity.totalSpan();
+    assertEquals(50, range.lowerEndpoint().intValue());
+    assertEquals(59, range.upperEndpoint().intValue());
   }
 }

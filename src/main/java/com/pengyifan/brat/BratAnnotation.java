@@ -18,6 +18,7 @@ import java.util.Objects;
  * A: attribute
  * M: modification (alias for attribute, for backward compatibility)
  * N: normalization
+ * *: equiv relation
  * #: note
  * </pre>
  * 
@@ -91,6 +92,8 @@ public abstract class BratAnnotation {
   public void setType(String type) {
     this.type = type;
   }
+
+  public abstract String toBratString();
   
   @Override
   public String toString() {
