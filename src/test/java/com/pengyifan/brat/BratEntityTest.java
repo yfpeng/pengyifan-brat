@@ -85,12 +85,7 @@ public class BratEntityTest {
 
   @Test
   public void testParseEntity() {
-    BratEntity entity = BratEntity.parseEntity(LINE);
-    assertEquals(ID, entity.getId());
-    assertEquals(TYPE, entity.getType());
-    assertEquals(TEXT, entity.getText());
-    assertEquals(SPAN_1.lowerEndpoint().intValue(), entity.beginPosition());
-    assertEquals(SPAN_2.upperEndpoint().intValue(), entity.endPosition());
+    assertEquals(base, BratEntity.parseEntity(LINE));
   }
 
   @Test

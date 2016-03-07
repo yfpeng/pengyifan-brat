@@ -5,6 +5,7 @@ import com.pengyifan.brat.BratDocument;
 import com.pengyifan.brat.BratEntity;
 import com.pengyifan.brat.BratEquivRelation;
 import com.pengyifan.brat.BratEvent;
+import com.pengyifan.brat.BratIllegalFormatException;
 import com.pengyifan.brat.BratNote;
 import com.pengyifan.brat.BratRelation;
 
@@ -96,9 +97,7 @@ public class BratDocumentReader implements Closeable {
         doc.addAnnotation(BratEquivRelation.parseEquivRelation(line));
         break;
       default:
-        throw new IllegalArgumentException(String.format(
-            "cannot parse line: %s",
-            line));
+        throw new BratIllegalFormatException(String.format("Cannot parse line: %s", line));
       }
     }
     return doc;

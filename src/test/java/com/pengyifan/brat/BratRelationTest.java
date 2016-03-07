@@ -70,11 +70,13 @@ public class BratRelationTest {
 
   @Test
   public void testParseRelation() {
-    BratRelation entity = BratRelation.parseRelation(LINE);
-    assertEquals(ID, entity.getId());
-    assertEquals(TYPE, entity.getType());
-    assertEquals(ROLE1_ID, entity.getArgId(ROLE1));
-    assertEquals(ROLE2_ID, entity.getArgId(ROLE2));
+    BratRelation relation = BratRelation.parseRelation(LINE);
+    assertEquals(ID, relation.getId());
+    assertEquals(TYPE, relation.getType());
+    assertTrue(relation.containsRole(ROLE1));
+    assertEquals(ROLE1_ID, relation.getArgId(ROLE1));
+    assertTrue(relation.containsRole(ROLE2));
+    assertEquals(ROLE2_ID, relation.getArgId(ROLE2));
   }
 
   @Test

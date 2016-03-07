@@ -99,9 +99,4 @@ public abstract class BratAnnotation {
    * @return the string in the brat standoff format
    */
   public abstract String toBratString();
-  
-  @Override
-  public String toString() {
-    return getId() + "\t" + getType();
-  }
 }

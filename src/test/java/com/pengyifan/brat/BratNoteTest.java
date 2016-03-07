@@ -72,11 +72,7 @@ public class BratNoteTest {
 
   @Test
   public void testParseNote() {
-    BratNote note = BratNote.parseNote(LINE);
-    assertEquals(ID, note.getId());
-    assertEquals(TYPE, note.getType());
-    assertEquals(TEXT, note.getText());
-    assertEquals(REFID, note.getRefId());
+    assertEquals(base, BratNote.parseNote(LINE));
   }
 
   @Test
