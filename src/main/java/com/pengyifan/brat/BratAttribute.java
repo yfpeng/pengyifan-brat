@@ -134,7 +134,8 @@ public class BratAttribute extends BratAnnotation {
   @Override
   public void setId(String id) {
     checkNotNull(id, "ID should not be null");
-    checkArgument(id.length() > 0 && id.charAt(0) == 'A', "ID should start with A");
+    checkArgument(id.length() > 0 && (id.charAt(0) == 'A' || id.charAt(0) == 'M'),
+        "ID should start with A or M");
     super.setId(id);
   }
 

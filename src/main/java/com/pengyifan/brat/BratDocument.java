@@ -79,7 +79,9 @@ public class BratDocument {
   }
 
   public void addAnnotation(BratAnnotation ann) {
-    checkArgument(!containsId(ann.getId()), "already have %s", ann.getId());
+    if (!(ann instanceof BratEquivRelation)) {
+      checkArgument(!containsId(ann.getId()), "already have %s", ann.getId());
+    }
     annotations.add(ann);
   }
 
