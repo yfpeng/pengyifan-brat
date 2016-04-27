@@ -12,9 +12,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Equivalence relations are symmetric and transitive relations that define
+ * Equivalence ie are symmetric and transitive ie that define
  * sets of annotations to be equivalent in some sense (e.g. referring to the
- * same real-world entity). Such relations can be represented in a compact way
+ * same real-world entity). Such ie can be represented in a compact way
  * as a SPACE-separated list of the IDs of the equivalent annotations. For
  * example
  * 

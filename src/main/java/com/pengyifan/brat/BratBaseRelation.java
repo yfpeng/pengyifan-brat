@@ -7,7 +7,7 @@ import java.util.SortedMap;
 import com.google.common.collect.Maps;
 
 /**
- * Base class for all relations/events.
+ * Base class for all ie/events.
  * 
  * @since 1.1.0
  * @author "Yifan Peng"
